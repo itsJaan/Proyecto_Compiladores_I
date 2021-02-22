@@ -13,7 +13,7 @@ import java.io.File;
  */
 public class Main {
     public static void main(String[] args) {
-        String ruta = "C:/Users/ItsJaan/Desktop/Proyecto_Compiladores-main/ProyectoCompiladores/src/proyectocompiladores/Analizador_Lexico.flex";
+        String ruta = "C:/Users/willi/OneDrive/Documents/proyectoCompiladores/Proyecto_Compiladores_I/src/proyectocompiladores/Analizador_Lexico.flex";
         lexer(ruta);
         
         formPrincipal form = new formPrincipal();

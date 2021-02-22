@@ -12,8 +12,11 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/ItsJaan/Desktop/Proyecto_Compiladores-main/ProyectoCompiladores/src/proyectocompiladores/Analizador_Lexico.flex</file>
-            <file>file:/C:/Users/ItsJaan/Desktop/Proyecto_Compiladores-main/ProyectoCompiladores/src/proyectocompiladores/Main.java</file>
+            <file>file:/C:/Users/willi/OneDrive/Documents/proyectoCompiladores/Proyecto_Compiladores_I/src/proyectocompiladores/Analizador_Lexico.flex</file>
+            <file>file:/C:/Users/willi/OneDrive/Documents/proyectoCompiladores/Proyecto_Compiladores_I/src/proyectocompiladores/Tokens.java</file>
+            <file>file:/C:/Users/willi/OneDrive/Documents/proyectoCompiladores/Proyecto_Compiladores_I/src/proyectocompiladores/Main.java</file>
+            <file>file:/C:/Users/willi/OneDrive/Documents/proyectoCompiladores/Proyecto_Compiladores_I/src/proyectocompiladores/Analizador_Lexico.java</file>
+            <file>file:/C:/Users/willi/OneDrive/Documents/proyectoCompiladores/Proyecto_Compiladores_I/src/proyectocompiladores/formPrincipal.java</file>
         </group>
     </open-files>
 </project-private>

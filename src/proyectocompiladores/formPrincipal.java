@@ -59,8 +59,13 @@ public class formPrincipal extends javax.swing.JFrame {
             }
         });
 
+        txt_lexico.setEditable(false);
         txt_lexico.setColumns(20);
+        txt_lexico.setForeground(new java.awt.Color(51, 51, 51));
         txt_lexico.setRows(5);
+        txt_lexico.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        txt_lexico.setSelectedTextColor(new java.awt.Color(51, 51, 51));
+        txt_lexico.setSelectionColor(new java.awt.Color(255, 255, 255));
         jScrollPane1.setViewportView(txt_lexico);
 
         txt_codigo.setColumns(20);
