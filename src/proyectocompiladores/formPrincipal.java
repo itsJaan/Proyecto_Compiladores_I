@@ -91,20 +91,20 @@ public class formPrincipal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(34, 34, 34)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 435, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(24, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(147, 147, 147)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel2)
-                .addGap(137, 137, 137))
+                .addGap(199, 199, 199))
             .addGroup(layout.createSequentialGroup()
                 .addGap(109, 109, 109)
                 .addComponent(btn_importar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btn_analisis_lexico)
-                .addGap(118, 118, 118))
+                .addGap(177, 177, 177))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -115,7 +115,7 @@ public class formPrincipal extends javax.swing.JFrame {
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
                     .addComponent(jScrollPane1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -157,38 +157,38 @@ public class formPrincipal extends javax.swing.JFrame {
                    }
                    switch (token) {
                        case ERROR:
-                           resultado += lexico.yytext() +  " Simbolo no definido.\n";
+                           resultado += lexico.yytext() +  "   << Simbolo no definido. >>\n";
                            break;
                        
                        case reservadas:
-                           resultado += lexico.yytext() +" Es una palabra Reservada.\n";
+                           resultado += lexico.yytext() +"   << Es una palabra Reservada. >>\n";
                            break;
                        case identificador:
-                           resultado += lexico.yytext() +" Es identificador.\n";
+                           resultado += lexico.yytext() +"   << Es identificador. >>\n";
                            break;
                        case operadorRelacional:
-                           resultado += lexico.yytext() +" Es un operador relacional.\n";
+                           resultado += lexico.yytext() +"   << Es un operador relacional. >>\n";
                            break;
                        case operadorAritmetico:
-                           resultado += lexico.yytext() +" Es un operador aritmetico.\n";
+                           resultado += lexico.yytext() +"   << Es un operador aritmetico. >>\n";
                            break;
                        case texto:
-                           resultado += lexico.yytext() +" Es un string.\n";
+                           resultado += lexico.yytext() +"   << Es un string. >>\n";
                            break;
                        case numero:
-                           resultado += lexico.yytext() +" Es un numero.\n";
+                           resultado += lexico.yytext() +"   << Es un numero. >>\n";
                            break;
                        case espacio:
                            resultado += "";
                            break;
                        case modulo:
-                           resultado += lexico.yytext() +" Es un operador aritmetico.\n";
+                           resultado += lexico.yytext() +"   << Es un operador aritmetico. >>\n";
                            break;
                        case caracterReservado:
-                           resultado += lexico.yytext() +" Es caracter reservado.\n";
+                           resultado += lexico.yytext() +"   << Es caracter reservado. >>\n";
                            break;
                        case findelinea:
-                           resultado += "";
+                           resultado += "<< ENTER. >>\n";
                            break;
                        case continuacionlinea:
                            resultado += "";
