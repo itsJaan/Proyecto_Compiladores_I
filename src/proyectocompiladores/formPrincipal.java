@@ -185,14 +185,16 @@ public class formPrincipal extends javax.swing.JFrame {
                            resultado += lexico.yytext() +"   << Es un operador aritmetico. >>\n";
                            break;
                        case caracterReservado:
-                           resultado += lexico.yytext() +"   << Es caracter reservado. >>\n";
+                           resultado += lexico.yytext() +"   <<  Es caracter reservado. >>\n";
                            break;
                        case findelinea:
-                           resultado += "<< ENTER. >>\n";
+                           resultado += "<< ENTER >>\n";
                            break;
                        case continuacionlinea:
                            resultado += "";
                            break;
+                       case comentario:
+                           resultado += lexico.yytext() + "    << COMENTARIO >>\n";
                        default:
                            resultado += "El token: " + token + "\n";
                            break;

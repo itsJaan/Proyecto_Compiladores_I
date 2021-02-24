@@ -21,5 +21,6 @@ public enum Tokens {
     caracterReservado,
     findelinea,
     continuacionlinea,
+    comentario,
     ERROR
 }

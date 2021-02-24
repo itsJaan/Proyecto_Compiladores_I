@@ -14,6 +14,7 @@ moduler=Mod
 operadores_aritmeticos = [\+|-|\*|\\|\^]
 espacios= [ \t\s]+
 textos = [\"].+[\"]
+comentarios = [\'].+
 caracteres_reservados = [\.|\"|\'|\(|\)|\{|\}]
 fin_de_linea = [\n]
 continuacion_linea= [\&\_|\_]
@@ -76,5 +77,6 @@ Reservadas = [I|i][M|m][P|p][O|o][R|r][T|t][S|s]|
         {caracteres_reservados}         {return caracterReservado;}
         {fin_de_linea}                  {return findelinea;}
         {continuacion_linea}            {return continuacionlinea;}
+        {comentarios}                   {return comentario}
         .                               {return ERROR;}
 }
