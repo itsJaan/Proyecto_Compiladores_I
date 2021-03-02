@@ -59,6 +59,7 @@ Reservadas = [I|i][M|m][P|p][O|o][R|r][T|t][S|s]|
              [N|n][U|u][L|l][L|l]
 %{
     public String lexema;
+    int esEnter = 0;
 %}
 %% 
 
@@ -66,17 +67,17 @@ Reservadas = [I|i][M|m][P|p][O|o][R|r][T|t][S|s]|
 
 <YYINITIAL>{
         
-        {Reservadas}                    {return reservadas;}
-        {id}                            {return identificador;}
-        {operadores_relacionales}       {return operadorRelacional;}
-        {operadores_aritmeticos}        {return operadorAritmetico;}
-        {textos}                        {return texto;}
-        {digitos}                       {return numero;}
-        {espacios}                      {return espacio;}
-        {moduler}                       {return modulo;}
-        {caracteres_reservados}         {return caracterReservado;}
-        {fin_de_linea}                  {return findelinea;}
-        {continuacion_linea}            {return continuacionlinea;}
-        {comentarios}                   {return comentario}
-        .                               {return ERROR;}
+        {Reservadas}                    {esEnter =0;return reservadas;}
+        {id}                            {esEnter =0;return identificador;}
+        {operadores_relacionales}       {esEnter =0;return operadorRelacional;}
+        {operadores_aritmeticos}        {esEnter =0;return operadorAritmetico;}
+        {textos}                        {esEnter =0;return texto;}
+        {digitos}                       {esEnter =0;return numero;}
+        {espacios}                      {esEnter =0;return espacio;}
+        {moduler}                       {esEnter =0;return modulo;}
+        {caracteres_reservados}         {esEnter =0;return caracterReservado;}
+        {fin_de_linea}                  {esEnter++; if(esEnter==1){return findelinea;}}
+        {continuacion_linea}            {esEnter =0;return continuacionlinea;}
+        {comentarios}                   {esEnter =0;return comentario}
+        .                               {esEnter =0;return ERROR;}
 }
