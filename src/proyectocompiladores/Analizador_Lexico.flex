@@ -58,8 +58,8 @@ Reservadas = [I|i][M|m][P|p][O|o][R|r][T|t][S|s]|
 %{
     public String lexema;
     int esEnter = 0;
-    public int getLine(){return yyline;}
-    public int getColumn(){return yycolumn;}
+    public int getLine(){return (yyline + 1);}
+    public int getColumn(){return (yycolumn +1);}
 %}
 %% 
 
