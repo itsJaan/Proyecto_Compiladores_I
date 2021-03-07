@@ -16,6 +16,7 @@ public class Main {
         String ruta = "C:/Users/willi/OneDrive/Documents/NetBeansProjects/Proyecto_Compiladores_I-master/src/proyectocompiladores/Analizador_Lexico.flex";
         lexer(ruta);
         
+        
         formPrincipal form = new formPrincipal();
         form.setVisible(true);
         form.show();
