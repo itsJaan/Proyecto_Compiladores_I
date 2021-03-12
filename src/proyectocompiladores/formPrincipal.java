@@ -157,28 +157,28 @@ public class formPrincipal extends javax.swing.JFrame {
                        return;
                    }
                    switch (token) {
-                       case error:
+                       case error_:
                            
                            resultado += "<<Se encontro error: "+ lexico.yytext() + " en la linea: "+ lexico.getLine()+ " columna: " + lexico.getColumn() +">>\n";
                            break;
                        
-                       case imports:case public_:case module: case if_:case sub:case for_:case dim:case end:case integer_:
+                       case imports:case public_:case module: case if_:case sub:case for_:case dim:case end_:case integer_:
                        case boolean_:case string_:case system_:case console_:case writeline:case as:case do_:case while_:
                        case struct:case then:case else_:case function_:case return_:case next:case private_:case loop:
                        case exit:case until:case to:case and:case or:case true_:case false_:case like:case mod:case int_:
-                       case null_:
+                       case main_:case step_:case null_:
                            resultado += lexico.yytext() +"\t\t   << Es una palabra Reservada. >>\n";
                            break;
                        case identificador:
                            resultado += lexico.yytext() +"\t\t   << Es identificador. >>\n";
                            break;
-                       case operadorRelacional:
+                       case mayorigual:case menorigual:case igual: case mayor:case menor:
                            resultado += lexico.yytext() +"\t\t   << Es un operador relacional. >>\n";
                            break;
-                       case operadorAritmetico:
+                       case suma:case resta:case mult: case div:case potencia:
                            resultado += lexico.yytext() +"\t\t   << Es un operador aritmetico. >>\n";
                            break;
-                       case texto:
+                       case texto_:
                            resultado += lexico.yytext() +"\t   << Es un string. >>\n";
                            break;
                        case numero:
@@ -191,13 +191,13 @@ public class formPrincipal extends javax.swing.JFrame {
                            resultado += lexico.yytext() +"\t\t   << Es un operador aritmetico. >>\n";
                            break;
                        case punto:case comillaD:case comillaS: case parentesisA:
-                       case parentesisC:case llaveA:case llaveC:
+                       case parentesisC:case llaveA:case llaveC:case coma:
                            resultado += lexico.yytext() +"\t\t   <<  Es caracter reservado. >>\n";
                            break;
                        case findelinea:
                            resultado += "<< ENTER >>\n";
                            break;
-                       case continuacionlinea:
+                       case continuaciondelinea:
                            resultado += "";
                            break;
                        case comentario:

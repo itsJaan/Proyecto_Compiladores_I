@@ -12,12 +12,12 @@ digitos = -?[0-9]+
 id= [a-zA-Z|\_]+[a-zA-Z|\_|0-9]*
 operadores_relacionales= [>=|<=|=|<|>]
 moduler=Mod
-operadores_aritmeticos = [\+|-|\*|\\|\^]
+operadores_aritmeticos = [\+|-|\*|\/|\^]
 espacios= [ \t\r]+
 textos = [\"].+[\"]
 comentarios = [\'].+
-caracteres_reservados = [\.|\"|\'|\(|\)|\{|\}]
-fin_de_linea = [\n]
+caracteres_reservados = [\.|\"|\'|\(|\)|\{|\}|\,]
+fin_de_linea = [\n\r]+
 continuacion_linea= [\&\_|\_]
 Reservadas = [I|i][M|m][P|p][O|o][R|r][T|t][S|s]|
              [P|p][U|u][B|b][L|l][I|i][C|c]|
@@ -55,6 +55,8 @@ Reservadas = [I|i][M|m][P|p][O|o][R|r][T|t][S|s]|
              [M|m][O|o][D|d]|
              [I|i][N|n][T|t]|
              [N|n][U|u][L|l][L|l]
+             [M|m][A|a][I|i][N|n]
+             [S|s][T|t][E|e][P|p]
 %{
     public String lexema;
     int esEnter = 0;
@@ -75,7 +77,7 @@ Reservadas = [I|i][M|m][P|p][O|o][R|r][T|t][S|s]|
                                         if(yytext().equalsIgnoreCase("sub")){return sub;}
                                         if(yytext().equalsIgnoreCase("for")){return for_;}
                                         if(yytext().equalsIgnoreCase("dim")){return dim;}
-                                        if(yytext().equalsIgnoreCase("end")){return end;}
+                                        if(yytext().equalsIgnoreCase("end")){return end_;}
                                         if(yytext().equalsIgnoreCase("integer")){return integer_;}
                                         if(yytext().equalsIgnoreCase("boolean")){return boolean_;}
                                         if(yytext().equalsIgnoreCase("string")){return string_;}
@@ -102,16 +104,37 @@ Reservadas = [I|i][M|m][P|p][O|o][R|r][T|t][S|s]|
                                         if(yytext().equalsIgnoreCase("false")){return false_;}
                                         if(yytext().equalsIgnoreCase("like")){return like;}
                                         if(yytext().equalsIgnoreCase("mod")){return mod;}
-                                        if(yytext().equalsIgnoreCase("int")){return int_;}
+                                        if(yytext().equalsIgnoreCase("int")){return  int_;}
                                         if(yytext().equalsIgnoreCase("null")){return null_;}
+                                        if(yytext().equalsIgnoreCase("main")){return main_;}
+                                        if(yytext().equalsIgnoreCase("step")){return step_;}
                                         }
+
         {id}                            {esEnter =0;return identificador;}
-        {operadores_relacionales}       {esEnter =0;return operadorRelacional;}
-        {operadores_aritmeticos}        {esEnter =0;return operadorAritmetico;}
-        {textos}                        {esEnter =0;return texto;}
+
+        {operadores_relacionales}       {esEnter =0;
+                                        if(yytext().equals(">=")){return mayorigual;}
+                                        if(yytext().equals("<=")){return menorigual;}
+                                        if(yytext().equals("=")){return igual;}
+                                        if(yytext().equals(">")){return mayor;}
+                                        if(yytext().equals("<")){return menor;}}
+
+        {operadores_aritmeticos}        {esEnter =0;
+                                        if(yytext().equals("+")){return suma;}
+                                        if(yytext().equals("-")){return resta;}
+                                        if(yytext().equals("*")){return mult;}
+                                        if(yytext().equals("/")){return div;}
+                                        if(yytext().equals("^")){return potencia;}
+                                        }
+
+        {textos}                        {esEnter =0;return texto_;}
+
         {digitos}                       {esEnter =0;return numero;}
+
         {espacios}                      {esEnter =0;return espacio;}
+
         {moduler}                       {esEnter =0;return modulo;}
+
         {caracteres_reservados}         {esEnter =0;
                                         if(yytext().equals(".")){return punto;}
                                         if(yytext().equals("\"")){return comillaD;}
@@ -120,12 +143,17 @@ Reservadas = [I|i][M|m][P|p][O|o][R|r][T|t][S|s]|
                                         if(yytext().equals(")")){return parentesisC;}
                                         if(yytext().equals("{")){return llaveA;}
                                         if(yytext().equals("}")){return llaveC;}
+                                        if(yytext().equals(",")){return coma;}
                                         }
+
         {fin_de_linea}                  {esEnter++; if(esEnter==1){return findelinea;}}
-        {continuacion_linea}            {esEnter =0;return continuacionlinea;}
+
+        {continuacion_linea}            {esEnter =0;return continuaciondelinea;}
+
         {comentarios}                   {esEnter =0;return comentario;}
+
         .                               {esEnter =0;
-                                        return error;
+                                        return error_;
                                         
                                         }
 }
