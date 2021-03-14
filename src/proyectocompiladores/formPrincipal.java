@@ -5,6 +5,7 @@
  */
 package proyectocompiladores;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,8 +13,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java_cup.runtime.Symbol;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -43,6 +46,8 @@ public class formPrincipal extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane3 = new javax.swing.JScrollPane();
+        txt_lexico1 = new javax.swing.JTextArea();
         btn_importar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         txt_lexico = new javax.swing.JTextArea();
@@ -51,6 +56,19 @@ public class formPrincipal extends javax.swing.JFrame {
         btn_analisis_lexico = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        txt_sintactico = new javax.swing.JTextArea();
+        btn_sin = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+
+        txt_lexico1.setEditable(false);
+        txt_lexico1.setColumns(20);
+        txt_lexico1.setForeground(new java.awt.Color(51, 51, 51));
+        txt_lexico1.setRows(5);
+        txt_lexico1.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        txt_lexico1.setSelectedTextColor(new java.awt.Color(51, 51, 51));
+        txt_lexico1.setSelectionColor(new java.awt.Color(255, 255, 255));
+        jScrollPane3.setViewportView(txt_lexico1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -85,28 +103,49 @@ public class formPrincipal extends javax.swing.JFrame {
 
         jLabel2.setText("Analisis Lexico");
 
+        txt_sintactico.setEditable(false);
+        txt_sintactico.setColumns(20);
+        txt_sintactico.setRows(5);
+        txt_sintactico.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jScrollPane4.setViewportView(txt_sintactico);
+
+        btn_sin.setText("Analisis Sintactico");
+        btn_sin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_sinActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("Analisis Sintactico");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(34, 34, 34)
+                .addGap(35, 35, 35)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 435, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(24, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(147, 147, 147)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel2)
-                .addGap(199, 199, 199))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(109, 109, 109)
                 .addComponent(btn_importar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(302, 302, 302)
                 .addComponent(btn_analisis_lexico)
-                .addGap(177, 177, 177))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btn_sin)
+                .addGap(142, 142, 142))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(147, 147, 147)
+                .addComponent(jLabel1)
+                .addGap(354, 354, 354)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel3)
+                .addGap(161, 161, 161))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -114,15 +153,18 @@ public class formPrincipal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jLabel2))
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane4)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
                     .addComponent(jScrollPane1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_importar)
-                    .addComponent(btn_analisis_lexico))
+                    .addComponent(btn_analisis_lexico)
+                    .addComponent(btn_sin))
                 .addGap(48, 48, 48))
         );
 
@@ -184,9 +226,6 @@ public class formPrincipal extends javax.swing.JFrame {
                        case numero:
                            resultado += lexico.yytext() +"\t\t   << Es un numero. >>\n";
                            break;
-                       case espacio:
-                           resultado += "";
-                           break;
                        case modulo:
                            resultado += lexico.yytext() +"\t\t   << Es un operador aritmetico. >>\n";
                            break;
@@ -242,6 +281,22 @@ public class formPrincipal extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btn_importarActionPerformed
 
+    private void btn_sinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_sinActionPerformed
+        // TODO add your handling code here:
+        String st = txt_codigo.getText();
+        Sintax s = new Sintax(new proyectocompiladores.Analizador_Sintactico(new StringReader(st)));
+        
+        try {
+            s.parse();
+            txt_sintactico.setText("Successful");
+            txt_sintactico.setForeground(Color.GREEN);
+        } catch (Exception ex) {
+            Symbol sym = s.getSymbol();
+            txt_sintactico.setText("Error de sintaxis.\n Linea: " + (sym.right + 1) + "\n Columna: " + (sym.left + 1) + "\n valor: " + sym.value);
+            txt_sintactico.setForeground(Color.RED);
+        }
+    }//GEN-LAST:event_btn_sinActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -280,11 +335,17 @@ public class formPrincipal extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_analisis_lexico;
     private javax.swing.JButton btn_importar;
+    private javax.swing.JButton btn_sin;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTextArea txt_codigo;
     private javax.swing.JTextArea txt_lexico;
+    private javax.swing.JTextArea txt_lexico1;
+    private javax.swing.JTextArea txt_sintactico;
     // End of variables declaration//GEN-END:variables
 }

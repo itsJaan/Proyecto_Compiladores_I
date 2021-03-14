@@ -22,7 +22,7 @@ continuacion_linea= [\&\_|\_]
 Reservadas = [I|i][M|m][P|p][O|o][R|r][T|t][S|s]|
              [P|p][U|u][B|b][L|l][I|i][C|c]|
              [M|m][O|o][D|d][U|u][L|l][E|e]|
-             [S|u][U|u][B|b]|
+             [S|s][U|u][B|b]|
              [F|f][O|o][R|r]|
              [I|i][F|f]|
              [D|d][I|i][M|m]|
@@ -54,8 +54,8 @@ Reservadas = [I|i][M|m][P|p][O|o][R|r][T|t][S|s]|
              [L|l][I|i][K|k][E|e]|
              [M|m][O|o][D|d]|
              [I|i][N|n][T|t]|
-             [N|n][U|u][L|l][L|l]
-             [M|m][A|a][I|i][N|n]
+             [N|n][U|u][L|l][L|l]|
+             [M|m][A|a][I|i][N|n]|
              [S|s][T|t][E|e][P|p]
 %{
     public String lexema;

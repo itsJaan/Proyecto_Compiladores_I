@@ -3,12 +3,21 @@ Imports Microsoft.VisuaLBasic
 
 Public Module Module1
 
+    public struct Alumno
+	 Dim edad As Integer
+	
+    end struct
+
     Public Sub Main()
-        Dim mynumber = 3
-        Dim ___ AS integer  = 20 
-        if mynumber = 2
-            console.WriteLine("hola 25 hola@hola")
-        end if
-	@ 
+        console.writeLine("Usando Estructura")
+	Dim estudiante As Alumno
+	estudiante.edad = 23
+	Dim cont As Integer
+	cont = 0
+	Do until cont = 3
+		console.writeLine("Edad del alumno: " & estudiante.edad)
+		cont = cont + 1
+	Loop
+	
     End Sub
 End Module
