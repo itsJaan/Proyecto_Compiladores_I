@@ -32,8 +32,10 @@ non terminal UC, IMPORTS, MODULE, IDENTIFICADOR_IMPORT, FUNCTION_, STRUCT_, MAIN
              FOR_WHILE, INFOR_WHILE, LLAMAR_FUNCION, PARAMETRO_SENCILLO, DECLARACIONSENCILLA, FUNCION_,
              SENTENCIA_FUNCION, IF_FUNCION, ELSE_IF_FUNCION, FOR_FUNCION, INFOR_FUNCION, SENTENCIA_FOR_FUNCION,
              IF_FOR_FUNCION, ELSE_IF_FOR_FUNCION, WHILE_FOR_FUNCION, INWHILE_FOR_FUNCION, WHILE_FUNCION,
-             INWHILE_FUNCION, SENTENCIA_WHILE_FUNCION, IF_WHILE_FUNCION, ELSEIF_FUNCION, FOR_WHILE_FUNCION,
-             INFOR_WHILE_FUNCION,ELSE_IF_WHILE_FUNCION,STRUCTMAIN,FUNCIONMAIN, INIF, INIF_FOR, INIF_WHILE;
+             INWHILE_FUNCION, SENTENCIA_WHILE_FUNCION, IF_WHILE_FUNCION, FOR_WHILE_FUNCION,
+             INFOR_WHILE_FUNCION,ELSE_IF_WHILE_FUNCION,STRUCTMAIN,FUNCIONMAIN, INIF, INIF_FOR, INIF_WHILE,
+             INIF_FUNCION , INIF_FOR_FUNCION , INIF_WHILE_FUNCION,ELSE_IF_WHILE_FUNCION2 ,ELSE_IF_WHILE2,
+             ELSE_IF_MAIN2 ,ELSE_IF_FOR2 ,ELSE_IF_FUNCION2,ELSE_IF_FOR_FUNCION2;
 
 
 start with UC;
@@ -44,17 +46,17 @@ IMPORTS ::= imports IDENTIFICADOR_IMPORT findelinea|imports IDENTIFICADOR_IMPORT
 
 IDENTIFICADOR_IMPORT ::= identificador|identificador punto IDENTIFICADOR_IMPORT|System_|System_ punto IDENTIFICADOR_IMPORT;
 
-MODULE ::=  Public_  Module  identificador findelinea NEXT_MODULE end_  Module;
+MODULE ::=  Public_  Module  identificador findelinea NEXT_MODULE end_  Module findelinea;
 
 NEXT_MODULE ::= MAIN|STRUCT_ MAIN|FUNCION_ MAIN|STRUCT_ findelinea NEXT_MODULE|FUNCION_ findelinea NEXT_MODULE;
 
 MAIN ::= Public_  sub  main_ parentesisA parentesisC findelinea  INMAIN end_ sub findelinea;
 
-INMAIN ::=  console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|SENTENCIA_MAIN|
+INMAIN ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|SENTENCIA_MAIN|
            LLAMAR_FUNCION findelinea|console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INMAIN|DECLARACION findelinea INMAIN|
            SENTENCIA_MAIN INMAIN|LLAMAR_FUNCION findelinea INMAIN;
 
-INPARENTESIS::=  texto_|numero|BOOLEAN|identificador|identificador punto identificador|OPERACION_ARITMETICA|texto_ continuaciondelinea INPARENTESIS|
+INPARENTESIS::= texto_|numero|BOOLEAN|identificador|identificador punto identificador|OPERACION_ARITMETICA|texto_ continuaciondelinea INPARENTESIS|
                 numero continuaciondelinea INPARENTESIS|OPERACION_ARITMETICA continuaciondelinea INPARENTESIS|
                 BOOLEAN continuaciondelinea INPARENTESIS|identificador continuaciondelinea INPARENTESIS|identificador punto identificador continuaciondelinea INPARENTESIS;
 
@@ -75,27 +77,27 @@ OPERACION_PARENTESIS ::= parentesisA OPERACION_ARITMETICA parentesisC| espacio O
 DECLARACION ::= dim  identificador  as  TYPE_|dim  identificador  as  TYPE_  igual  TYPEDECLARE|dim identificador  igual  TYPEDECLARE|
                 dim  identificador igual LLAMAR_FUNCION|dim  identificador as TYPE_ igual LLAMAR_FUNCION|dim  identificador as TYPE_ igual OPERACION_ARITMETICA|dim identificador igual OPERACION_ARITMETICA|
                 identificador igual identificador|identificador igual LLAMAR_FUNCION|identificador igual OPERACION_ARITMETICA|
-                identificador igual numero|identificador igual BOOLEAN|identificador igual texto_|identificador punto identificador igual identificador|
+                identificador igual numero|identificador igual BOOLEAN|identificador igual texto_ findelinea|identificador punto identificador igual identificador|
                 identificador punto identificador igual LLAMAR_FUNCION|identificador punto identificador igual OPERACION_ARITMETICA|
-                identificador punto identificador igual numero|identificador punto identificador igual BOOLEAN|identificador punto identificador igual texto_;
+                identificador punto identificador igual numero|identificador punto identificador igual BOOLEAN|identificador punto identificador igual texto_ | dim identificador igual identificador | dim identificador as TYPE_ igual identificador;
 
 TYPE_ ::= string_|boolean_|integer_|int_|identificador; 
 
 TYPEDECLARE ::= texto_|numero|BOOLEAN;
-
 
 BOOLEAN ::= true_|false_;
 
 SENTENCIA_MAIN ::= IF_MAIN|FOR_MAIN|WHILE_MAIN;
 
 IF_MAIN ::=  if_ CONDICION then findelinea INIF end_ if_ findelinea|if_ CONDICION then findelinea INIF else_ findelinea INIF end_ if_ findelinea|
-            if_ CONDICION then findelinea INIF ELSE_IF_MAIN findelinea INIF end_ if_ findelinea;
+             if_ CONDICION then findelinea INIF ELSE_IF_MAIN findelinea INIF end_ if_ findelinea|if_ CONDICION then findelinea INIF ELSE_IF_MAIN2 end_ if_ findelinea;
 
-INIF ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|SENTENCIA_MAIN|
+INIF ::=   console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|SENTENCIA_MAIN|
            LLAMAR_FUNCION findelinea|console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INIF|DECLARACION findelinea INIF|
            SENTENCIA_MAIN findelinea INIF|LLAMAR_FUNCION findelinea INIF;
 
-ELSE_IF_MAIN ::= else_ if_ CONDICION then findelinea INIF  ELSE_IF_MAIN|else_ if_ CONDICION then findelinea INIF else_;
+ELSE_IF_MAIN ::= else_ if_ CONDICION then findelinea INIF  ELSE_IF_MAIN|else_ if_ CONDICION then findelinea INIF else_ ;
+ELSE_IF_MAIN2::= else_ if_ CONDICION then findelinea INIF  ELSE_IF_MAIN2|else_ if_ CONDICION then findelinea INIF;
 
 CONDICION ::= identificador OPERADORRELACIONAL identificador|identificador OPERADORRELACIONAL numero|
               identificador OPERADORRELACIONAL BOOLEAN|identificador OPERADORRELACIONAL OPERACION_ARITMETICA|
@@ -115,25 +117,26 @@ OPERADORRELACIONAL ::= mayor igual|menor igual|igual|mayor|menor;
 FOR_MAIN ::= for_ identificador igual numero to numero step_ numero findelinea INFOR_MAIN next identificador findelinea;
 
 INFOR_MAIN::= console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|
-             SENTENCIA_FOR|console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INFOR_MAIN|DECLARACION findelinea INFOR_MAIN|
-             SENTENCIA_FOR INFOR_MAIN|LLAMAR_FUNCION findelinea|LLAMAR_FUNCION findelinea INFOR_MAIN |exit for_ findelinea;
+              SENTENCIA_FOR|console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INFOR_MAIN|DECLARACION findelinea INFOR_MAIN|
+              SENTENCIA_FOR INFOR_MAIN|LLAMAR_FUNCION findelinea|LLAMAR_FUNCION findelinea INFOR_MAIN |exit for_ findelinea;
 
 
 SENTENCIA_FOR::= IF_FOR|FOR_MAIN|WHILE_FOR; 
 
-INIF_FOR ::=  console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|
+INIF_FOR ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|
              SENTENCIA_FOR|console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INIF_FOR|DECLARACION findelinea INIF_FOR|
              SENTENCIA_FOR INIF_FOR|LLAMAR_FUNCION findelinea|LLAMAR_FUNCION findelinea INIF_FOR |exit for_ findelinea;
 
 IF_FOR ::= if_ CONDICION then findelinea INIF_FOR  end_ if_ findelinea|if_ CONDICION then findelinea INIF_FOR  else_ findelinea INIF_FOR  end_ if_ findelinea|
-           if_ CONDICION then findelinea INIF_FOR ELSE_IF_FOR findelinea INIF_FOR end_ if_ findelinea;
+           if_ CONDICION then findelinea INIF_FOR ELSE_IF_FOR findelinea INIF_FOR end_ if_ findelinea|
+           if_ CONDICION then findelinea INIF_FOR ELSE_IF_FOR2 end_ if_ findelinea;
 
 ELSE_IF_FOR ::= else_ if_ CONDICION then findelinea  INIF_FOR else_|else_ if_ CONDICION then findelinea INIF_FOR ELSE_IF_FOR;
-
+ELSE_IF_FOR2::= else_ if_ CONDICION then findelinea  INIF_FOR|else_ if_ CONDICION then findelinea INIF_FOR ELSE_IF_FOR2;
 
 WHILE_FOR::= do_ until CONDICION findelinea INWHILE_FOR loop findelinea;
 
-INWHILE_FOR ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|SENTENCIA_WHILE|
+INWHILE_FOR ::=  console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|SENTENCIA_WHILE|
                  console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INWHILE_FOR|DECLARACION findelinea INWHILE_FOR|
                  SENTENCIA_WHILE INWHILE_FOR|LLAMAR_FUNCION findelinea|LLAMAR_FUNCION findelinea INWHILE_FOR|exit do_ findelinea| exit for_ findelinea;
 
@@ -145,89 +148,106 @@ INWHILE_MAIN ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC 
 
 SENTENCIA_WHILE ::= IF_WHILE |FOR_WHILE|WHILE_MAIN;
 
-INIF_WHILE ::=   console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|SENTENCIA_WHILE|
-                 console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INIF_WHILE|DECLARACION findelinea INIF_WHILE|
-                 SENTENCIA_WHILE INIF_WHILE|LLAMAR_FUNCION findelinea|LLAMAR_FUNCION findelinea INIF_WHILE|exit do_ findelinea; 
+INIF_WHILE ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|SENTENCIA_WHILE|
+               console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INIF_WHILE|DECLARACION findelinea INIF_WHILE|
+               SENTENCIA_WHILE INIF_WHILE|LLAMAR_FUNCION findelinea|LLAMAR_FUNCION findelinea INIF_WHILE|exit do_ findelinea; 
 
-IF_WHILE ::= if_ CONDICION then findelinea INIF_WHILE  end_ if_ findelinea|if_ CONDICION then findelinea INIF_WHILE  else_ findelinea INIF_WHILE  end_ if_ findelinea|
-           if_ CONDICION then findelinea INIF_WHILE ELSE_IF_WHILE findelinea INIF_WHILE end_ if_ findelinea;
+IF_WHILE ::= if_ CONDICION then findelinea INIF_WHILE  end_ if_ findelinea|
+             if_ CONDICION then findelinea INIF_WHILE  else_ findelinea INIF_WHILE  end_ if_ findelinea|
+             if_ CONDICION then findelinea INIF_WHILE ELSE_IF_WHILE findelinea INIF_WHILE end_ if_ findelinea|
+             if_ CONDICION then findelinea INIF_WHILE ELSE_IF_WHILE2 end_ if_ findelinea;
 
 ELSE_IF_WHILE ::= else_ if_ CONDICION then findelinea  INIF_WHILE else_|else_ if_ CONDICION then findelinea INIF_WHILE ELSE_IF_WHILE;
+ELSE_IF_WHILE2::= else_ if_ CONDICION then findelinea  INIF_WHILE |else_ if_ CONDICION then findelinea INIF_WHILE ELSE_IF_WHILE2;
 
-FOR_WHILE ::=  for_ identificador igual numero to numero step_ numero findelinea INFOR_WHILE next identificador findelinea;
+FOR_WHILE ::= for_ identificador igual numero to numero step_ numero findelinea INFOR_WHILE next identificador findelinea;
 
 INFOR_WHILE ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|
-             SENTENCIA_FOR|console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INFOR_WHILE|DECLARACION findelinea INFOR_WHILE|
-             SENTENCIA_FOR INFOR_WHILE|LLAMAR_FUNCION findelinea|LLAMAR_FUNCION findelinea INFOR_WHILE |exit for_ findelinea|exit do_ findelinea;
+                SENTENCIA_FOR|console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INFOR_WHILE|
+                DECLARACION findelinea INFOR_WHILE|SENTENCIA_FOR INFOR_WHILE|LLAMAR_FUNCION findelinea|
+                LLAMAR_FUNCION findelinea INFOR_WHILE |exit for_ findelinea|exit do_ findelinea;
 
 LLAMAR_FUNCION ::= identificador parentesisA parentesisC| identificador parentesisA PARAMETRO_SENCILLO parentesisC;
 
 PARAMETRO_SENCILLO ::=  numero coma_ PARAMETRO_SENCILLO|identificador coma_ PARAMETRO_SENCILLO|BOOLEAN coma_ PARAMETRO_SENCILLO|
                         identificador|numero|BOOLEAN;
 
-
 DECLARACIONSENCILLA ::= dim identificador as TYPE_ findelinea|dim identificador as TYPE_ findelinea DECLARACIONSENCILLA;
 
-STRUCT_ ::= Public_ struct_ identificador findelinea DECLARACIONSENCILLA end_ struct_ findelinea;
+STRUCT_ ::= Public_ struct_ identificador findelinea DECLARACIONSENCILLA end_ struct_ ;
 
-FUNCION_ ::= private_ function_ identificador parentesisA PARAMETRO parentesisC as TYPE_ INFUNCION end_ function_;
+FUNCION_ ::= private_ function_ identificador parentesisA PARAMETRO parentesisC as TYPE_ findelinea INFUNCION end_ function_;
 
 PARAMETRO ::= identificador as TYPE_|identificador as TYPE_ coma_ PARAMETRO;
 
-INFUNCION ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC|DECLARACION|SENTENCIA_FUNCION|
-               LLAMAR_FUNCION|console_ punto writeline parentesisA  INPARENTESIS parentesisC INFUNCION|DECLARACION INFUNCION|
-               SENTENCIA_FUNCION INFUNCION|LLAMAR_FUNCION INFUNCION|exit function_;
-
+INFUNCION ::=  console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|SENTENCIA_FUNCION|
+               LLAMAR_FUNCION findelinea|console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INFUNCION|DECLARACION findelinea INFUNCION|
+               SENTENCIA_FUNCION INFUNCION|LLAMAR_FUNCION findelinea INFUNCION|exit function_ findelinea;
 
 SENTENCIA_FUNCION ::= IF_FUNCION|FOR_FUNCION|WHILE_FUNCION;
 
-IF_FUNCION ::=  if_ CONDICION then INFUNCION end_ if_|if_ CONDICION then INFUNCION else_ INFUNCION end_ if_|
-              if_ CONDICION then INFUNCION ELSEIF_FUNCION else_ INFUNCION end_ if_|
-              if_ CONDICION then INFUNCION ELSEIF_FUNCION findelinea;
+IF_FUNCION ::=if_ CONDICION then findelinea INIF_FUNCION  end_ if_ findelinea|
+              if_ CONDICION then findelinea INIF_FUNCION  else_ findelinea INIF_FUNCION  end_ if_ findelinea|
+              if_ CONDICION then findelinea INIF_FUNCION ELSE_IF_FUNCION findelinea INIF_FUNCION end_ if_ findelinea|
+              if_ CONDICION then findelinea INIF_FUNCION ELSE_IF_FUNCION2 end_ if_ findelinea;
 
-ELSEIF_FUNCION ::= else_ if_ CONDICION then findelinea INFUNCION end_ if_|else_ if_ CONDICION then INFUNCION ELSEIF_FUNCION end_ if_;
+INIF_FUNCION ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|
+                 SENTENCIA_FUNCION|console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INIF_FUNCION|DECLARACION findelinea INIF_FUNCION|
+                 SENTENCIA_FUNCION INIF_FUNCION|LLAMAR_FUNCION findelinea|LLAMAR_FUNCION findelinea INIF_FUNCION | exit function_ findelinea;
 
-FOR_FUNCION ::= for_ identificador igual numero to numero step_ numero INFOR_FUNCION next identificador;
+ELSE_IF_FUNCION ::= else_ if_ CONDICION then findelinea INIF_FUNCION else_|else_ if_ CONDICION then findelinea INIF_FUNCION ELSE_IF_FUNCION;
+ELSE_IF_FUNCION2::= else_ if_ CONDICION then findelinea INIF_FUNCION |else_ if_ CONDICION then findelinea INIF_FUNCION ELSE_IF_FUNCION2;
 
-INFOR_FUNCION ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC|DECLARACION|SENTENCIA_FOR_FUNCION|
-                console_ punto writeline parentesisA  INPARENTESIS parentesisC INFOR_FUNCION|DECLARACION INFOR_FUNCION|
-                SENTENCIA_FOR_FUNCION INFOR_FUNCION|LLAMAR_FUNCION|LLAMAR_FUNCION INFOR_FUNCION|exit function_ |exit for_;
+FOR_FUNCION ::= for_ identificador igual numero to numero step_ numero findelinea INFOR_FUNCION next identificador findelinea;
+
+INFOR_FUNCION ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|
+                  SENTENCIA_FOR_FUNCION|console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INFOR_FUNCION|DECLARACION findelinea INFOR_FUNCION|
+                  SENTENCIA_FOR_FUNCION INFOR_FUNCION|LLAMAR_FUNCION findelinea|LLAMAR_FUNCION findelinea INFOR_FUNCION |exit function_ findelinea|exit for_ findelinea;
 
 SENTENCIA_FOR_FUNCION ::= IF_FOR_FUNCION |FOR_FUNCION|WHILE_FOR_FUNCION;
 
-IF_FOR_FUNCION ::= if_ CONDICION then INFOR_FUNCION end_ if_|if_ CONDICION then INFOR_FUNCION else_ INFOR_FUNCION end_ if_|
-                 if_ CONDICION then INFOR_FUNCION ELSE_IF_FOR_FUNCION else_ INFOR_FUNCION end_ if_|
-                 if_ CONDICION then INFOR_FUNCION ELSE_IF_FOR_FUNCION findelinea;
+IF_FOR_FUNCION ::= if_ CONDICION then findelinea INIF_FOR_FUNCION  end_ if_ findelinea|
+                   if_ CONDICION then findelinea INIF_FOR_FUNCION  else_ findelinea INIF_FOR_FUNCION  end_ if_ findelinea|
+                   if_ CONDICION then findelinea INIF_FOR_FUNCION ELSE_IF_FOR_FUNCION findelinea INIF_FOR_FUNCION end_ if_ findelinea|
+                   if_ CONDICION then findelinea INIF_FOR_FUNCION ELSE_IF_FOR_FUNCION2 end_ if_ findelinea;
 
-ELSE_IF_FOR_FUNCION ::= else_ if_ CONDICION then findelinea INFOR_FUNCION end_ if_|
-                       else_ if_ CONDICION then INFOR_FUNCION ELSE_IF_FOR_FUNCION end_ if_;
+INIF_FOR_FUNCION ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|
+                 SENTENCIA_FOR_FUNCION|console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INIF_FOR_FUNCION|DECLARACION findelinea INIF_FOR_FUNCION|
+                 SENTENCIA_FOR_FUNCION INIF_FOR_FUNCION|LLAMAR_FUNCION findelinea|LLAMAR_FUNCION findelinea INIF_FUNCION | exit function_ findelinea|exit for_ findelinea; 
 
-WHILE_FOR_FUNCION::= do_ until CONDICION INWHILE_FOR loop;
+ELSE_IF_FOR_FUNCION ::= else_ if_ CONDICION then findelinea INIF_FOR_FUNCION else_|else_ if_ CONDICION then findelinea INIF_FOR_FUNCION ELSE_IF_FOR_FUNCION;
+ELSE_IF_FOR_FUNCION2::= else_ if_ CONDICION then findelinea INIF_FOR_FUNCION |else_ if_ CONDICION then findelinea INIF_FOR_FUNCION ELSE_IF_FOR_FUNCION2;
 
-INWHILE_FOR_FUNCION ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC|DECLARACION|SENTENCIA_FOR|
-                        console_ punto writeline parentesisA  INPARENTESIS parentesisC INWHILE_FOR_FUNCION|
-                        DECLARACION INWHILE_FOR_FUNCION | SENTENCIA_FOR_FUNCION INWHILE_FOR_FUNCION|
-                        LLAMAR_FUNCION|LLAMAR_FUNCION INWHILE_FOR_FUNCION| exit do_ |exit for_ | exit function_;
+WHILE_FOR_FUNCION::= do_ until CONDICION findelinea INWHILE_FOR_FUNCION loop findelinea;
 
-WHILE_FUNCION::= do_ until CONDICION INWHILE_FUNCION loop;
+INWHILE_FOR_FUNCION ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|SENTENCIA_WHILE|
+                 console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INWHILE_MAIN|DECLARACION findelinea INWHILE_MAIN|
+                 SENTENCIA_WHILE INWHILE_MAIN|LLAMAR_FUNCION findelinea|LLAMAR_FUNCION findelinea INWHILE_MAIN|exit do_ findelinea |exit for_ findelinea | exit function_ findelinea;
 
-INWHILE_FUNCION ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC|DECLARACION|
-                    SENTENCIA_WHILE_FUNCION |console_ punto writeline parentesisA  INPARENTESIS parentesisC INWHILE_FUNCION|
-                    DECLARACION INWHILE_MAIN | SENTENCIA_WHILE_FUNCION INWHILE_FUNCION|LLAMAR_FUNCION|
-                    LLAMAR_FUNCION INWHILE_FUNCION|exit do_ |exit function_;
+WHILE_FUNCION::= do_ until CONDICION findelinea INWHILE_FUNCION loop findelinea;
+
+INWHILE_FUNCION ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|
+                 SENTENCIA_FOR_FUNCION|console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INWHILE_FUNCION|DECLARACION findelinea INWHILE_FUNCION|
+                 SENTENCIA_FOR_FUNCION INWHILE_FUNCION|LLAMAR_FUNCION findelinea|LLAMAR_FUNCION findelinea INIF_FUNCION| exit do_ findelinea |exit function_ findelinea;
 
 SENTENCIA_WHILE_FUNCION ::= IF_WHILE_FUNCION |FOR_WHILE_FUNCION|WHILE_FUNCION;
 
-IF_WHILE_FUNCION ::= if_ CONDICION then INWHILE_FUNCION end_ if_|if_ CONDICION then INWHILE_FUNCION else_ INWHILE_FUNCION end_ if_|
-                     if_ CONDICION then INWHILE_FUNCION ELSE_IF_WHILE_FUNCION else_ INWHILE_FUNCION end_ if_|
-                     if_ CONDICION then INWHILE_FUNCION ELSE_IF_WHILE_FUNCION findelinea;
+IF_WHILE_FUNCION ::= if_ CONDICION then INIF_WHILE_FUNCION end_ if_|if_ CONDICION then INIF_WHILE_FUNCION else_ INIF_WHILE_FUNCION end_ if_|
+                     if_ CONDICION then INIF_WHILE_FUNCION ELSE_IF_WHILE_FUNCION else_ INIF_WHILE_FUNCION end_ if_|
+                     if_ CONDICION then INIF_WHILE_FUNCION ELSE_IF_WHILE_FUNCION findelinea|
+                     if_ CONDICION then findelinea INIF_WHILE_FUNCION ELSE_IF_WHILE_FUNCION2 end_ if_ findelinea;
+                     
 
-ELSE_IF_WHILE_FUNCION ::= else_ if_ CONDICION then findelinea INWHILE_FUNCION end_ if_|
-                         else_ if_ CONDICION then INWHILE_FUNCION ELSE_IF_WHILE_FUNCION end_ if_;
+INIF_WHILE_FUNCION ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|
+                 SENTENCIA_FOR_FUNCION|console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INIF_FOR_FUNCION|DECLARACION findelinea INIF_FOR_FUNCION|
+                 SENTENCIA_FOR_FUNCION INIF_FOR_FUNCION|LLAMAR_FUNCION findelinea|LLAMAR_FUNCION findelinea INIF_FUNCION | exit function_ findelinea|exit for_ findelinea;
 
-FOR_WHILE_FUNCION ::= for_ identificador igual numero to numero step_ numero INFOR_WHILE_FUNCION next identificador;
+ELSE_IF_WHILE_FUNCION ::= else_ if_ CONDICION then findelinea INIF_WHILE_FUNCION else_|else_ if_ CONDICION then findelinea INIF_WHILE_FUNCION ELSE_IF_WHILE_FUNCION;
+ELSE_IF_WHILE_FUNCION2::= else_ if_ CONDICION then findelinea INIF_WHILE_FUNCION |else_ if_ CONDICION then findelinea INIF_WHILE_FUNCION ELSE_IF_WHILE_FUNCION2;
 
-INFOR_WHILE_FUNCION ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC|DECLARACION|SENTENCIA_WHILE_FUNCION|
-                      console_ punto writeline parentesisA INPARENTESIS parentesisC INFOR_WHILE_FUNCION|
-                      DECLARACION INFOR_WHILE_FUNCION | SENTENCIA_WHILE_FUNCION INFOR_WHILE_FUNCION|
-                      LLAMAR_FUNCION|LLAMAR_FUNCION INFOR_WHILE_FUNCION|exit for_ findelinea|exit do_ findelinea|exit function_ findelinea;  
+
+FOR_WHILE_FUNCION ::= for_ identificador igual numero to numero step_ numero findelinea INFOR_WHILE_FUNCION next identificador findelinea;
+
+INFOR_WHILE_FUNCION ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|SENTENCIA_WHILE|
+                 console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INFOR_WHILE_FUNCION|DECLARACION findelinea INFOR_WHILE_FUNCION|
+                 SENTENCIA_WHILE INFOR_WHILE_FUNCION|LLAMAR_FUNCION findelinea|LLAMAR_FUNCION findelinea INFOR_WHILE_FUNCION|exit do_ findelinea |exit for_ findelinea | exit function_ findelinea;

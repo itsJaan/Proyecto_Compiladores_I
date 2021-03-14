@@ -1,0 +1,26 @@
+* UC
+* IMPORT
+* Module
+* Function_
+* Type_
+* Parametro
+* Infunction
+* Declaracion
+* TypeDeclare
+* OperacionAritmetica 
+* Operacionmasmenos
+* Operacionmod
+* Operacionmultdiv
+* Opeacionpot
+* Operacionparentesis
+* Sentencia
+* IF
+* CONDICION
+* OPERADOR RELACIONAL 
+* FOR
+* WHILE
+* Struct_
+Main 
+
+
+
