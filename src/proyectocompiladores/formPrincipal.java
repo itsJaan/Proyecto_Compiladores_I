@@ -185,6 +185,7 @@ public class formPrincipal extends javax.swing.JFrame {
         }
         String codigo_analisis = txt_codigo.getText();
         if (codigo_analisis.equals("")){
+            txt_lexico.setText("");
             JOptionPane.showMessageDialog(null, "No hay ningun codigo a analizar.");
         }else{
             try {
@@ -285,15 +286,20 @@ public class formPrincipal extends javax.swing.JFrame {
         // TODO add your handling code here:
         String st = txt_codigo.getText();
         Sintax s = new Sintax(new proyectocompiladores.Analizador_Sintactico(new StringReader(st)));
-        
-        try {
-            s.parse();
-            txt_sintactico.setText("Successful");
-            txt_sintactico.setForeground(Color.GREEN);
-        } catch (Exception ex) {
-            Symbol sym = s.getSymbol();
-            txt_sintactico.setText("Error de sintaxis.\n Linea: " + (sym.right + 1) + "\n Columna: " + (sym.left + 1) + "\n valor: " + sym.value);
-            txt_sintactico.setForeground(Color.RED);
+        if (st.equals("")){
+            txt_sintactico.setText("");
+            JOptionPane.showMessageDialog(null, "No hay ningun codigo a analizar.");
+            
+        }else{
+            try {
+                s.parse();
+                txt_sintactico.setText("Successful");
+                txt_sintactico.setForeground(Color.GREEN);
+            } catch (Exception ex) {
+                Symbol sym = s.getSymbol();
+                txt_sintactico.setText("Error de sintaxis.\n Linea: " + (sym.right + 1) + "\n Columna: " + (sym.left + 1) + "\n valor: " + sym.value);
+                txt_sintactico.setForeground(Color.RED);
+            }
         }
     }//GEN-LAST:event_btn_sinActionPerformed
 

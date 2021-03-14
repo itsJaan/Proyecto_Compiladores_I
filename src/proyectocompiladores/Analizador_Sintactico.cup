@@ -40,13 +40,13 @@ non terminal UC, IMPORTS, MODULE, IDENTIFICADOR_IMPORT, FUNCTION_, STRUCT_, MAIN
 
 start with UC;
 
-UC ::= IMPORTS MODULE;
+UC ::= IMPORTS MODULE|IMPORTS MODULE findelinea;
 
 IMPORTS ::= imports IDENTIFICADOR_IMPORT findelinea|imports IDENTIFICADOR_IMPORT findelinea IMPORTS;
 
 IDENTIFICADOR_IMPORT ::= identificador|identificador punto IDENTIFICADOR_IMPORT|System_|System_ punto IDENTIFICADOR_IMPORT;
 
-MODULE ::=  Public_  Module  identificador findelinea NEXT_MODULE end_  Module findelinea;
+MODULE ::= Public_  Module  identificador findelinea NEXT_MODULE end_ Module;
 
 NEXT_MODULE ::= MAIN|STRUCT_ MAIN|FUNCION_ MAIN|STRUCT_ findelinea NEXT_MODULE|FUNCION_ findelinea NEXT_MODULE;
 
