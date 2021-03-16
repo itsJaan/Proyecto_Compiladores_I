@@ -46,6 +46,7 @@ public enum Tokens {
     mod,
     int_,
     step_,
+    byval,
     null_,
     identificador,
     mayorigual,
@@ -74,6 +75,5 @@ public enum Tokens {
     continuaciondelinea,
     comentario,
     main_,
-    error_,
-    lambda
+    error_
 }

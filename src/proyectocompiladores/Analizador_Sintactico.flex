@@ -27,6 +27,7 @@ system = [S|s][Y|y][S|s][T|t][E|e][M|m]
 dim = [D|d][I|i][M|m]
 end = [E|e][N|n][D|d]
 if = [I|i][F|f]
+byval = [B|b][Y|y][V|v][A|a][L|l]
 caracteres_reservados = [\.|\"|\'|\(|\)|\{|\}|,]
 continuacion_linea= [\&\_|\_]
 Reservadas = [S|s][U|u][B|b]|
@@ -82,6 +83,8 @@ Reservadas = [S|s][U|u][B|b]|
         {dim}     {return new Symbol(sym.dim, yychar, yyline, yytext());}
         {end}     {return new Symbol(sym.end_, yychar, yyline, yytext());}
         {if}      {return new Symbol(sym.if_, yychar, yyline, yytext());}
+        {byval}   {return new Symbol(sym.byval, yychar, yyline, yytext());}
+        
         {Reservadas}                    {
                                         
                                         

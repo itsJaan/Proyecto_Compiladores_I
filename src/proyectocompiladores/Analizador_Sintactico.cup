@@ -21,7 +21,7 @@ terminal imports, if_, Public_, Module, sub,for_,dim,end_,integer_,boolean_,stri
          mod,int_,step_,null_, identificador,mayorigual, menorigual,igual, mayor, menor,
          suma,resta,mult,div,potencia,texto_,numero,espacio,modulo,punto,comillaD,
          comillaS,parentesisA,parentesisC,llaveA,llaveC,guionB,findelinea,
-         continuaciondelinea,comentario,main_,coma_,error_;
+         continuaciondelinea,comentario,main_,coma_,error_, byval;
 
 non terminal UC, IMPORTS, MODULE, IDENTIFICADOR_IMPORT, FUNCTION_, STRUCT_, MAIN, PARAMETRO, TYPE_,
              INFUNCION,SENTENCIA, DECLARACION, TYPEDECLARE,OPERACION_ARITMETICA, NEXT_MODULE, INMAIN,
@@ -35,7 +35,7 @@ non terminal UC, IMPORTS, MODULE, IDENTIFICADOR_IMPORT, FUNCTION_, STRUCT_, MAIN
              INWHILE_FUNCION, SENTENCIA_WHILE_FUNCION, IF_WHILE_FUNCION, FOR_WHILE_FUNCION,
              INFOR_WHILE_FUNCION,ELSE_IF_WHILE_FUNCION,STRUCTMAIN,FUNCIONMAIN, INIF, INIF_FOR, INIF_WHILE,
              INIF_FUNCION , INIF_FOR_FUNCION , INIF_WHILE_FUNCION,ELSE_IF_WHILE_FUNCION2 ,ELSE_IF_WHILE2,
-             ELSE_IF_MAIN2 ,ELSE_IF_FOR2 ,ELSE_IF_FUNCION2,ELSE_IF_FOR_FUNCION2;
+             ELSE_IF_MAIN2 ,ELSE_IF_FOR2 ,ELSE_IF_FUNCION2,ELSE_IF_FOR_FUNCION2, NUMERO,LLAMAR_SUB,PARAMETRO_SENCILLO2;
 
 
 start with UC;
@@ -48,42 +48,46 @@ IDENTIFICADOR_IMPORT ::= identificador|identificador punto IDENTIFICADOR_IMPORT|
 
 MODULE ::= Public_  Module  identificador findelinea NEXT_MODULE end_ Module;
 
-NEXT_MODULE ::= MAIN|STRUCT_ MAIN|FUNCION_ MAIN|STRUCT_ findelinea NEXT_MODULE|FUNCION_ findelinea NEXT_MODULE;
+NEXT_MODULE ::= MAIN|STRUCT_ MAIN|FUNCION_ MAIN |STRUCT_ findelinea NEXT_MODULE|FUNCION_ findelinea NEXT_MODULE |MAIN findelinea NEXT_MODULE;
 
-MAIN ::= Public_  sub  main_ parentesisA parentesisC findelinea  INMAIN end_ sub findelinea;
+MAIN ::= Public_  sub  main_ parentesisA parentesisC findelinea  INMAIN end_ sub findelinea|Public_ sub  identificador parentesisA PARAMETRO parentesisC findelinea  INMAIN end_ sub findelinea;
 
 INMAIN ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|SENTENCIA_MAIN|
            LLAMAR_FUNCION findelinea|console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INMAIN|DECLARACION findelinea INMAIN|
-           SENTENCIA_MAIN INMAIN|LLAMAR_FUNCION findelinea INMAIN;
+           SENTENCIA_MAIN INMAIN|LLAMAR_FUNCION findelinea INMAIN |LLAMAR_SUB findelinea|LLAMAR_SUB findelinea INMAIN| exit sub findelinea;
 
-INPARENTESIS::= texto_|numero|BOOLEAN|identificador|identificador punto identificador|OPERACION_ARITMETICA|texto_ continuaciondelinea INPARENTESIS|
-                numero continuaciondelinea INPARENTESIS|OPERACION_ARITMETICA continuaciondelinea INPARENTESIS|
+LLAMAR_SUB ::= identificador PARAMETRO_SENCILLO findelinea;
+
+NUMERO ::= numero | resta numero;
+
+INPARENTESIS::= texto_|NUMERO|BOOLEAN|identificador|identificador punto identificador|OPERACION_ARITMETICA|texto_ continuaciondelinea INPARENTESIS|
+                NUMERO continuaciondelinea INPARENTESIS|OPERACION_ARITMETICA continuaciondelinea INPARENTESIS|
                 BOOLEAN continuaciondelinea INPARENTESIS|identificador continuaciondelinea INPARENTESIS|identificador punto identificador continuaciondelinea INPARENTESIS;
 
 
-OPERACION_ARITMETICA ::= numero OPERACION_ARITMETICA_MAS_MENOS|OPERACION_PARENTESIS;
+OPERACION_ARITMETICA ::= NUMERO OPERACION_ARITMETICA_MAS_MENOS|OPERACION_PARENTESIS;
 
-OPERACION_ARITMETICA_MAS_MENOS ::= suma numero|resta numero|suma numero OPERACION_ARITMETICA_MAS_MENOS|
-                                   resta numero OPERACION_ARITMETICA_MAS_MENOS|OPERACION_MOD;
+OPERACION_ARITMETICA_MAS_MENOS ::= suma NUMERO|resta NUMERO|suma NUMERO OPERACION_ARITMETICA_MAS_MENOS|
+                                   resta NUMERO OPERACION_ARITMETICA_MAS_MENOS|OPERACION_MOD;
 
-OPERACION_MOD ::= mod numero|mod numero OPERACION_MOD|OPERACION_MULT_DIV;
+OPERACION_MOD ::= mod NUMERO|mod NUMERO OPERACION_MOD|OPERACION_MULT_DIV;
 
-OPERACION_MULT_DIV::= mult numero|div numero|mult numero OPERACION_MULT_DIV|div numero OPERACION_MULT_DIV|OPERACION_POTENCIA;
+OPERACION_MULT_DIV::= mult NUMERO|div NUMERO|mult NUMERO OPERACION_MULT_DIV|div NUMERO OPERACION_MULT_DIV|OPERACION_POTENCIA;
 
-OPERACION_POTENCIA ::= potencia numero OPERACION_POTENCIA|potencia numero|OPERACION_PARENTESIS;
+OPERACION_POTENCIA ::= potencia NUMERO OPERACION_POTENCIA|potencia NUMERO|OPERACION_PARENTESIS;
 
 OPERACION_PARENTESIS ::= parentesisA OPERACION_ARITMETICA parentesisC| espacio OPERACION_ARITMETICA_MAS_MENOS;
 
 DECLARACION ::= dim  identificador  as  TYPE_|dim  identificador  as  TYPE_  igual  TYPEDECLARE|dim identificador  igual  TYPEDECLARE|
                 dim  identificador igual LLAMAR_FUNCION|dim  identificador as TYPE_ igual LLAMAR_FUNCION|dim  identificador as TYPE_ igual OPERACION_ARITMETICA|dim identificador igual OPERACION_ARITMETICA|
                 identificador igual identificador|identificador igual LLAMAR_FUNCION|identificador igual OPERACION_ARITMETICA|
-                identificador igual numero|identificador igual BOOLEAN|identificador igual texto_ findelinea|identificador punto identificador igual identificador|
+                identificador igual NUMERO|identificador igual BOOLEAN|identificador igual texto_ findelinea|identificador punto identificador igual identificador|
                 identificador punto identificador igual LLAMAR_FUNCION|identificador punto identificador igual OPERACION_ARITMETICA|
-                identificador punto identificador igual numero|identificador punto identificador igual BOOLEAN|identificador punto identificador igual texto_ | dim identificador igual identificador | dim identificador as TYPE_ igual identificador;
+                identificador punto identificador igual NUMERO|identificador punto identificador igual BOOLEAN|identificador punto identificador igual texto_ | dim identificador igual identificador | dim identificador as TYPE_ igual identificador;
 
 TYPE_ ::= string_|boolean_|integer_|int_|identificador; 
 
-TYPEDECLARE ::= texto_|numero|BOOLEAN;
+TYPEDECLARE ::= texto_|NUMERO|BOOLEAN;
 
 BOOLEAN ::= true_|false_;
 
@@ -99,22 +103,22 @@ INIF ::=   console_ punto writeline parentesisA  INPARENTESIS parentesisC findel
 ELSE_IF_MAIN ::= else_ if_ CONDICION then findelinea INIF  ELSE_IF_MAIN|else_ if_ CONDICION then findelinea INIF else_ ;
 ELSE_IF_MAIN2::= else_ if_ CONDICION then findelinea INIF  ELSE_IF_MAIN2|else_ if_ CONDICION then findelinea INIF;
 
-CONDICION ::= identificador OPERADORRELACIONAL identificador|identificador OPERADORRELACIONAL numero|
+CONDICION ::= identificador OPERADORRELACIONAL identificador|identificador OPERADORRELACIONAL NUMERO|
               identificador OPERADORRELACIONAL BOOLEAN|identificador OPERADORRELACIONAL OPERACION_ARITMETICA|
-              OPERACION_ARITMETICA OPERADORRELACIONAL numero|OPERACION_ARITMETICA OPERADORRELACIONAL OPERACION_ARITMETICA|
+              OPERACION_ARITMETICA OPERADORRELACIONAL NUMERO|OPERACION_ARITMETICA OPERADORRELACIONAL OPERACION_ARITMETICA|
               OPERACION_ARITMETICA OPERADORRELACIONAL identificador|OPERACION_ARITMETICA OPERADORRELACIONAL BOOLEAN|
-              BOOLEAN OPERADORRELACIONAL BOOLEAN|BOOLEAN OPERADORRELACIONAL numero|BOOLEAN OPERADORRELACIONAL identificador|
-              BOOLEAN OPERADORRELACIONAL OPERACION_ARITMETICA|numero OPERADORRELACIONAL numero|
-              numero OPERADORRELACIONAL identificador|numero OPERADORRELACIONAL OPERACION_ARITMETICA|
-              numero OPERADORRELACIONAL BOOLEAN|BOOLEAN OPERADORRELACIONAL LLAMAR_FUNCION|
-              identificador OPERADORRELACIONAL LLAMAR_FUNCION|numero OPERADORRELACIONAL LLAMAR_FUNCION|
+              BOOLEAN OPERADORRELACIONAL BOOLEAN|BOOLEAN OPERADORRELACIONAL NUMERO|BOOLEAN OPERADORRELACIONAL identificador|
+              BOOLEAN OPERADORRELACIONAL OPERACION_ARITMETICA|NUMERO OPERADORRELACIONAL NUMERO|
+              NUMERO OPERADORRELACIONAL identificador|NUMERO OPERADORRELACIONAL OPERACION_ARITMETICA|
+              NUMERO OPERADORRELACIONAL BOOLEAN|BOOLEAN OPERADORRELACIONAL LLAMAR_FUNCION|
+              identificador OPERADORRELACIONAL LLAMAR_FUNCION|NUMERO OPERADORRELACIONAL LLAMAR_FUNCION|
               OPERACION_ARITMETICA OPERADORRELACIONAL LLAMAR_FUNCION|LLAMAR_FUNCION OPERADORRELACIONAL BOOLEAN|
-              LLAMAR_FUNCION OPERADORRELACIONAL identificador|LLAMAR_FUNCION OPERADORRELACIONAL numero|
+              LLAMAR_FUNCION OPERADORRELACIONAL identificador|LLAMAR_FUNCION OPERADORRELACIONAL NUMERO|
               LLAMAR_FUNCION OPERADORRELACIONAL OPERACION_ARITMETICA;
 
 OPERADORRELACIONAL ::= mayor igual|menor igual|igual|mayor|menor;
 
-FOR_MAIN ::= for_ identificador igual numero to numero step_ numero findelinea INFOR_MAIN next identificador findelinea;
+FOR_MAIN ::= for_ identificador igual NUMERO to NUMERO step_ NUMERO findelinea INFOR_MAIN next identificador findelinea;
 
 INFOR_MAIN::= console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|
               SENTENCIA_FOR|console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INFOR_MAIN|DECLARACION findelinea INFOR_MAIN|
@@ -160,7 +164,7 @@ IF_WHILE ::= if_ CONDICION then findelinea INIF_WHILE  end_ if_ findelinea|
 ELSE_IF_WHILE ::= else_ if_ CONDICION then findelinea  INIF_WHILE else_|else_ if_ CONDICION then findelinea INIF_WHILE ELSE_IF_WHILE;
 ELSE_IF_WHILE2::= else_ if_ CONDICION then findelinea  INIF_WHILE |else_ if_ CONDICION then findelinea INIF_WHILE ELSE_IF_WHILE2;
 
-FOR_WHILE ::= for_ identificador igual numero to numero step_ numero findelinea INFOR_WHILE next identificador findelinea;
+FOR_WHILE ::= for_ identificador igual NUMERO to NUMERO step_ NUMERO findelinea INFOR_WHILE next identificador findelinea;
 
 INFOR_WHILE ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|
                 SENTENCIA_FOR|console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INFOR_WHILE|
@@ -169,8 +173,11 @@ INFOR_WHILE ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC f
 
 LLAMAR_FUNCION ::= identificador parentesisA parentesisC| identificador parentesisA PARAMETRO_SENCILLO parentesisC;
 
-PARAMETRO_SENCILLO ::=  numero coma_ PARAMETRO_SENCILLO|identificador coma_ PARAMETRO_SENCILLO|BOOLEAN coma_ PARAMETRO_SENCILLO|
-                        identificador|numero|BOOLEAN;
+PARAMETRO_SENCILLO ::=  parentesisA PARAMETRO_SENCILLO2 parentesisC coma_ PARAMETRO_SENCILLO|
+                        parentesisA PARAMETRO_SENCILLO2 parentesisC|PARAMETRO_SENCILLO2 coma_ PARAMETRO_SENCILLO|
+                        PARAMETRO_SENCILLO2;
+
+PARAMETRO_SENCILLO2 ::= identificador|BOOLEAN|NUMERO;
 
 DECLARACIONSENCILLA ::= dim identificador as TYPE_ findelinea|dim identificador as TYPE_ findelinea DECLARACIONSENCILLA;
 
@@ -178,7 +185,7 @@ STRUCT_ ::= Public_ struct_ identificador findelinea DECLARACIONSENCILLA end_ st
 
 FUNCION_ ::= private_ function_ identificador parentesisA PARAMETRO parentesisC as TYPE_ findelinea INFUNCION end_ function_;
 
-PARAMETRO ::= identificador as TYPE_|identificador as TYPE_ coma_ PARAMETRO;
+PARAMETRO ::= identificador as TYPE_|identificador as TYPE_ coma_ PARAMETRO|byval identificador as TYPE_ coma_ PARAMETRO|byval identificador as TYPE_;
 
 INFUNCION ::=  console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|SENTENCIA_FUNCION|
                LLAMAR_FUNCION findelinea|console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INFUNCION|DECLARACION findelinea INFUNCION|
@@ -198,7 +205,7 @@ INIF_FUNCION ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC 
 ELSE_IF_FUNCION ::= else_ if_ CONDICION then findelinea INIF_FUNCION else_|else_ if_ CONDICION then findelinea INIF_FUNCION ELSE_IF_FUNCION;
 ELSE_IF_FUNCION2::= else_ if_ CONDICION then findelinea INIF_FUNCION |else_ if_ CONDICION then findelinea INIF_FUNCION ELSE_IF_FUNCION2;
 
-FOR_FUNCION ::= for_ identificador igual numero to numero step_ numero findelinea INFOR_FUNCION next identificador findelinea;
+FOR_FUNCION ::= for_ identificador igual NUMERO to NUMERO step_ NUMERO findelinea INFOR_FUNCION next identificador findelinea;
 
 INFOR_FUNCION ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|
                   SENTENCIA_FOR_FUNCION|console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INFOR_FUNCION|DECLARACION findelinea INFOR_FUNCION|
@@ -246,7 +253,7 @@ ELSE_IF_WHILE_FUNCION ::= else_ if_ CONDICION then findelinea INIF_WHILE_FUNCION
 ELSE_IF_WHILE_FUNCION2::= else_ if_ CONDICION then findelinea INIF_WHILE_FUNCION |else_ if_ CONDICION then findelinea INIF_WHILE_FUNCION ELSE_IF_WHILE_FUNCION2;
 
 
-FOR_WHILE_FUNCION ::= for_ identificador igual numero to numero step_ numero findelinea INFOR_WHILE_FUNCION next identificador findelinea;
+FOR_WHILE_FUNCION ::= for_ identificador igual NUMERO to NUMERO step_ NUMERO findelinea INFOR_WHILE_FUNCION next identificador findelinea;
 
 INFOR_WHILE_FUNCION ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea|DECLARACION findelinea|SENTENCIA_WHILE|
                  console_ punto writeline parentesisA  INPARENTESIS parentesisC findelinea INFOR_WHILE_FUNCION|DECLARACION findelinea INFOR_WHILE_FUNCION|

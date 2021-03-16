@@ -25,6 +25,7 @@ Reservadas = [I|i][M|m][P|p][O|o][R|r][T|t][S|s]|
              [S|s][U|u][B|b]|
              [F|f][O|o][R|r]|
              [I|i][F|f]|
+             [B|b][Y|y][V|v][A|a][L|l]|
              [D|d][I|i][M|m]|
              [E|e][N|n][D|d]|
              [I|i][N|n][T|t][E|e][G|g][E|e][R|r]|
@@ -108,6 +109,7 @@ Reservadas = [I|i][M|m][P|p][O|o][R|r][T|t][S|s]|
                                         if(yytext().equalsIgnoreCase("null")){return null_;}
                                         if(yytext().equalsIgnoreCase("main")){return main_;}
                                         if(yytext().equalsIgnoreCase("step")){return step_;}
+                                        if(yytext().equalsIgnoreCase("byval")){return byval;}    
                                         }
 
         {id}                            {esEnter =0;return identificador;}
