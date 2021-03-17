@@ -1,9 +1,0 @@
-Imports System
-Imports Microsoft.VisuaLBasic
-
-Public Module Module1
-
-    Public Sub Main()
-        Dim ___ AS integer  = 20 'DAVID SI LEES ESTO SOS UN BUEN COME MIERDA
-End Sub
-End Module
