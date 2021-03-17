@@ -73,10 +73,14 @@ INPARENTESIS::= texto_|NUMERO|BOOLEAN|identificador|identificador punto identifi
                 NUMERO continuaciondelinea INPARENTESIS|OPERACION_ARITMETICA continuaciondelinea INPARENTESIS|
                 BOOLEAN continuaciondelinea INPARENTESIS|identificador continuaciondelinea INPARENTESIS|identificador punto identificador continuaciondelinea INPARENTESIS;
 
+OPERACION_ARITMETICA ::= numero OPERADOR_ARITMETICO OPERACION_AR|parentesisA numero OPERADOR_ARITMETICO OPERACION_AR parentesisC|
+                         parentesisA numero OPERADOR_ARITMETICO OPERACION_AR parentesisC OPERACION_AR|
+                         parentesisA numero OPERADOR_ARITMETICO OPERACION_AR parentesisC OPERADOR_ARITMETICO OPERACION_AR|
+                         OPERACION_AR parentesisA numero OPERADOR_ARITMETICO OPERACION_AR parentesisC|
+                         OPERACION_AR parentesisA numero OPERADOR_ARITMETICO OPERACION_AR parentesisC OPERACION_AR|
+                         OPERACION_AR parentesisA numero OPERADOR_ARITMETICO OPERACION_AR parentesisC OPERADOR_ARITMETICO OPERACION_AR;
 
-OPERACION_ARITMETICA ::= numero OPERADOR_ARITMETICO OPERACION_AR|parentesisA numero OPERADOR_ARITMETICO OPERACION_AR parentesisC;
-
-OPERADOR_ARITMETICO ::= suma|resta|mult|div|potencia|mod; 
+OPERADOR_ARITMETICO ::= suma|resta|mult|div|potencia|mod_; 
 
 OPERACION_AR ::= numero|OPERACION_ARITMETICA;
 
