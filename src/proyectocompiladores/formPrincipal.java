@@ -209,7 +209,7 @@ public class formPrincipal extends javax.swing.JFrame {
                        case boolean_:case string_:case system_:case console_:case writeline:case as:case do_:case while_:
                        case struct:case then:case else_:case function_:case return_:case next:case private_:case loop:
                        case exit:case until:case to:case and:case or:case true_:case false_:case like:case mod:case int_:
-                       case main_:case step_:case null_:
+                       case main_:case step_:case byval:case elseif_:case null_:
                            resultado += lexico.yytext() +"\t\t   << Es una palabra Reservada. >>\n";
                            break;
                        case identificador:
@@ -218,7 +218,7 @@ public class formPrincipal extends javax.swing.JFrame {
                        case mayorigual:case menorigual:case igual: case mayor:case menor:
                            resultado += lexico.yytext() +"\t\t   << Es un operador relacional. >>\n";
                            break;
-                       case suma:case resta:case mult: case div:case potencia:
+                       case suma:case resta_:case mult: case div:case potencia:case mod_:
                            resultado += lexico.yytext() +"\t\t   << Es un operador aritmetico. >>\n";
                            break;
                        case texto_:
@@ -242,6 +242,7 @@ public class formPrincipal extends javax.swing.JFrame {
                            break;
                        case comentario:
                            resultado += lexico.yytext() + "\t\t    << COMENTARIO >>\n";
+                           break;
                        default:
                            resultado += "El token: " + token + "\n";
                            break;

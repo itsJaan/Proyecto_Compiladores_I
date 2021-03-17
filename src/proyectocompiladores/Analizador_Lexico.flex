@@ -8,11 +8,10 @@ import static proyectocompiladores.Tokens.*;
 %line
 %column
 
-digitos = -?[0-9]+
+digitos = [0-9]+
 id= [a-zA-Z|\_]+[a-zA-Z|\_|0-9]*
 operadores_relacionales= [>=|<=|=|<|>]
-moduler=Mod
-operadores_aritmeticos = [\+|-|\*|\/|\^]
+operadores_aritmeticos = [\+|\-|\*|\/|\^|%]
 espacios= [ \t\r]+
 textos = [\"].+[\"]
 comentarios = [\'].+
@@ -57,7 +56,8 @@ Reservadas = [I|i][M|m][P|p][O|o][R|r][T|t][S|s]|
              [I|i][N|n][T|t]|
              [N|n][U|u][L|l][L|l]|
              [M|m][A|a][I|i][N|n]|
-             [S|s][T|t][E|e][P|p]
+             [S|s][T|t][E|e][P|p]|
+             [E|e][L|l][S|s][E|e][I|i][F|f]
 %{
     public String lexema;
     int esEnter = 0;
@@ -110,6 +110,7 @@ Reservadas = [I|i][M|m][P|p][O|o][R|r][T|t][S|s]|
                                         if(yytext().equalsIgnoreCase("main")){return main_;}
                                         if(yytext().equalsIgnoreCase("step")){return step_;}
                                         if(yytext().equalsIgnoreCase("byval")){return byval;}    
+                                        if(yytext().equalsIgnoreCase("elseif")){return elseif_;}    
                                         }
 
         {id}                            {esEnter =0;return identificador;}
@@ -123,19 +124,18 @@ Reservadas = [I|i][M|m][P|p][O|o][R|r][T|t][S|s]|
 
         {operadores_aritmeticos}        {esEnter =0;
                                         if(yytext().equals("+")){return suma;}
-                                        if(yytext().equals("-")){return resta;}
+                                        if(yytext().equals("-")){return resta_;}
                                         if(yytext().equals("*")){return mult;}
                                         if(yytext().equals("/")){return div;}
                                         if(yytext().equals("^")){return potencia;}
+                                        if(yytext().equals("%")){return mod_;}
                                         }
 
         {textos}                        {esEnter =0;return texto_;}
 
         {digitos}                       {esEnter =0;return numero;}
 
-        {espacios}                      {esEnter =0;return espacio;}
-
-        {moduler}                       {esEnter =0;return modulo;}
+        {espacios}                      {/*Ignore*/}
 
         {caracteres_reservados}         {esEnter =0;
                                         if(yytext().equals(".")){return punto;}

@@ -3,16 +3,7 @@ Imports Microsoft.VisuaLBasic
 
 Public Module Module1
 
-    private function suma(n1 As Integer, n2 As Integer) As Integer
-    for x = 5 to 10 step 1
-        console.writeLine("Llamando Funcion Suma")
-    next x
-    end function
-
     Public Sub Main()
-        console.writeLine("Llamando Funcion Suma")
-    Dim result As Integer
-    result = suma(3,2)
-    console.writeLine("Resultado es igual: " & result)
-    End Sub
+        Dim ___ AS integer  = 20 'DAVID SI LEES ESTO SOS UN BUEN COME MIERDA
+End Sub
 End Module

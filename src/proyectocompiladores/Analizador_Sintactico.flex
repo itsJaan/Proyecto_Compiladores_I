@@ -11,11 +11,10 @@ import java_cup.runtime.Symbol;
 %full
 
 
-digitos = -?[0-9]+
+digitos = [0-9]+
 id= [a-zA-Z|\_]+[a-zA-Z|\_|0-9]*
 operadores_relacionales= [>=|<=|=|<|>]
-moduler=Mod
-operadores_aritmeticos = [\+|-|\*|\/|\^]
+operadores_aritmeticos = [\+|\-|\*|\/|\^|%]
 espacios= [ \t]+
 findelinea = [\n\r]+
 textos = [\"].+[\"]
@@ -32,8 +31,7 @@ caracteres_reservados = [\.|\"|\'|\(|\)|\{|\}|,]
 continuacion_linea= [\&\_|\_]
 Reservadas = [S|s][U|u][B|b]|
              [F|f][O|o][R|r]|
-                        
-             
+             [E|e][L|l][S|s][E|e][I|i][F|f]|
              [I|i][N|n][T|t][E|e][G|g][E|e][R|r]|
              [B|b][O|o][O|o][L|l][E|e][A|a][N|n]|
              [S|s][T|t][R|r][I|i][N|n][G|g]|
@@ -75,7 +73,7 @@ Reservadas = [S|s][U|u][B|b]|
 
 
 
-
+        {comentarios} {return new Symbol(sym.comentario, yychar, yyline, yytext());}
         {imports} {return new Symbol(sym.imports, yychar, yyline, yytext());}
         {module}  {return new Symbol(sym.Module, yychar, yyline, yytext());}
         {system}  {return new Symbol(sym.System_, yychar, yyline, yytext());}
@@ -125,6 +123,7 @@ Reservadas = [S|s][U|u][B|b]|
                                         if(yytext().equalsIgnoreCase("null")){return new Symbol(sym.null_, yychar, yyline, yytext());}
                                         if(yytext().equalsIgnoreCase("main")){return new Symbol(sym.main_, yychar, yyline, yytext());}
                                         if(yytext().equalsIgnoreCase("step")){return new Symbol(sym.step_, yychar, yyline, yytext());}
+                                        if(yytext().equalsIgnoreCase("elseif")){return new Symbol(sym.elseif_, yychar, yyline, yytext());}
                                         }
         {id}                            {return new Symbol(sym.identificador, yychar, yyline, yytext());}
         {operadores_relacionales}       {if(yytext().equals(">=")){return new Symbol(sym.mayorigual, yychar, yyline, yytext());}
@@ -137,7 +136,9 @@ Reservadas = [S|s][U|u][B|b]|
                                         if(yytext().equals("-")){return new Symbol(sym.resta, yychar, yyline, yytext());}
                                         if(yytext().equals("*")){return new Symbol(sym.mult, yychar, yyline, yytext());}
                                         if(yytext().equals("/")){return new Symbol(sym.div, yychar, yyline, yytext());}
-                                        if(yytext().equals("^")){return new Symbol(sym.potencia, yychar, yyline, yytext());}}
+                                        if(yytext().equals("^")){return new Symbol(sym.potencia, yychar, yyline, yytext());}
+                                        if(yytext().equals("%")){return new Symbol(sym.mod_, yychar, yyline, yytext());}
+                                        }
 
         {textos}                        {return new Symbol(sym.texto_, yychar, yyline, yytext());}
 
@@ -145,7 +146,6 @@ Reservadas = [S|s][U|u][B|b]|
 
         {espacios}                      {/*Ignore*/}
 
-        {moduler}                       {return new Symbol(sym.module, yychar, yyline, yytext());}
         {caracteres_reservados}         {
                                         if(yytext().equals(".")){return new Symbol(sym.punto, yychar, yyline, yytext());}
                                         if(yytext().equals("\"")){return new Symbol(sym.comillaD, yychar, yyline, yytext());}
@@ -161,7 +161,6 @@ Reservadas = [S|s][U|u][B|b]|
 
         {findelinea}                    {return new Symbol(sym.findelinea, yychar, yyline, yytext());}
 
-        {comentarios}                   {return new Symbol(sym.comentario, yychar, yyline, yytext());}
 
         .                               {
                                         return new Symbol(sym.error, yychar, yyline, yytext());
