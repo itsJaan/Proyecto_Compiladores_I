@@ -115,11 +115,11 @@ OPERACION_AR ::= OPERANDOS_TYPE|OPERACION_ARITMETICA;
 
 DECLARACION ::= dim  identificador  as  TYPE_ FIN_CON_COMENT|dim  identificador  as  TYPE_  igual  TYPEDECLARE FIN_CON_COMENT|dim identificador  igual  TYPEDECLARE FIN_CON_COMENT|
                 dim  identificador igual LLAMAR_FUNCION FIN_CON_COMENT|dim  identificador as TYPE_ igual LLAMAR_FUNCION FIN_CON_COMENT|dim  identificador as TYPE_ igual OPERACION_ARITMETICA FIN_CON_COMENT|dim identificador igual OPERACION_ARITMETICA FIN_CON_COMENT|
-                identificador igual identificador|identificador igual LLAMAR_FUNCION FIN_CON_COMENT|identificador igual OPERACION_ARITMETICA FIN_CON_COMENT|
+                identificador igual identificador FIN_CON_COMENT|identificador igual LLAMAR_FUNCION FIN_CON_COMENT|identificador igual OPERACION_ARITMETICA FIN_CON_COMENT|
                 identificador igual NUMERO|identificador igual BOOLEAN FIN_CON_COMENT|identificador igual texto_ FIN_CON_COMENT|identificador igual READLINE_FUNCION FIN_CON_COMENT|identificador punto identificador igual identificador FIN_CON_COMENT|
                 identificador punto identificador igual LLAMAR_FUNCION FIN_CON_COMENT|identificador punto identificador igual OPERACION_ARITMETICA FIN_CON_COMENT|identificador punto identificador igual READLINE_FUNCION FIN_CON_COMENT|
                 identificador punto identificador igual NUMERO FIN_CON_COMENT|identificador punto identificador igual BOOLEAN FIN_CON_COMENT|identificador punto identificador igual texto_ FIN_CON_COMENT| dim identificador igual identificador FIN_CON_COMENT|
-                dim identificador as TYPE_ igual identificador FIN_CON_COMENT|dim  identificador igual LLAMAR_SUB|dim identificador as TYPE_ igual LLAMAR_SUB|identificador punto identificador igual LLAMAR_SUB ;
+                dim identificador as TYPE_ igual identificador FIN_CON_COMENT|dim identificador igual LLAMAR_SUB|dim identificador as TYPE_ igual LLAMAR_SUB|identificador punto identificador igual LLAMAR_SUB | identificador igual LLAMAR_SUB;
 
 TYPE_ ::= string_|boolean_|integer_|int_|identificador; 
 
