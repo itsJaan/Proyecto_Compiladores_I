@@ -60,7 +60,8 @@ Reservadas = [S|s][U|u][B|b]|
              [I|i][N|n][T|t]|
              [N|n][U|u][L|l][L|l]|
              [M|m][A|a][I|i][N|n]|
-             [S|s][T|t][E|e][P|p]
+             [S|s][T|t][E|e][P|p]|
+             [R|r][E|e][A|a][D|d][L|l][I|i][N|n][E|e]
 %{
     private Symbol symbol(int type, Object value){
         return new Symbol(type, yyline, yycolumn, value);
@@ -124,6 +125,7 @@ Reservadas = [S|s][U|u][B|b]|
                                         if(yytext().equalsIgnoreCase("main")){return new Symbol(sym.main_, yychar, yyline, yytext());}
                                         if(yytext().equalsIgnoreCase("step")){return new Symbol(sym.step_, yychar, yyline, yytext());}
                                         if(yytext().equalsIgnoreCase("elseif")){return new Symbol(sym.elseif_, yychar, yyline, yytext());}
+                                        if(yytext().equalsIgnoreCase("readline")){return new Symbol(sym.readline, yychar, yyline, yytext());} 
                                         }
         {id}                            {return new Symbol(sym.identificador, yychar, yyline, yytext());}
         {operadores_relacionales}       {if(yytext().equals(">=")){return new Symbol(sym.mayorigual, yychar, yyline, yytext());}

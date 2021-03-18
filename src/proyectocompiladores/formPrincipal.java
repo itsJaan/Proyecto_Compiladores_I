@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java_cup.runtime.Symbol;
@@ -209,7 +211,7 @@ public class formPrincipal extends javax.swing.JFrame {
                        case boolean_:case string_:case system_:case console_:case writeline:case as:case do_:case while_:
                        case struct:case then:case else_:case function_:case return_:case next:case private_:case loop:
                        case exit:case until:case to:case and:case or:case true_:case false_:case like:case mod:case int_:
-                       case main_:case step_:case byval:case elseif_:case null_:
+                       case main_:case step_:case byval:case elseif_:case readline:case null_:
                            resultado += lexico.yytext() +"\t\t   << Es una palabra Reservada. >>\n";
                            break;
                        case identificador:
@@ -297,8 +299,8 @@ public class formPrincipal extends javax.swing.JFrame {
                 txt_sintactico.setText("Successful");
                 txt_sintactico.setForeground(Color.GREEN);
             } catch (Exception ex) {
-                Symbol sym = s.getSymbol();
-                txt_sintactico.setText("Error de sintaxis.\n Linea: " + (sym.right + 1) + "\n Columna: " + (sym.left + 1) + "\n valor: " + sym.value);
+                Symbol sym = s.getSymbol(); 
+                txt_sintactico.setText("Error de sintaxis. Linea: " + (sym.right + 1) + " Columna: " + (sym.left + 1) + " valor: " + sym.value);
                 txt_sintactico.setForeground(Color.RED);
             }
         }

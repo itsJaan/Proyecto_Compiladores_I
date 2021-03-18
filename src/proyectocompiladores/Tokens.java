@@ -76,5 +76,6 @@ public enum Tokens {
     comentario,
     main_,
     mod_,
+    readline,
     error_
 }

@@ -57,7 +57,8 @@ Reservadas = [I|i][M|m][P|p][O|o][R|r][T|t][S|s]|
              [N|n][U|u][L|l][L|l]|
              [M|m][A|a][I|i][N|n]|
              [S|s][T|t][E|e][P|p]|
-             [E|e][L|l][S|s][E|e][I|i][F|f]
+             [E|e][L|l][S|s][E|e][I|i][F|f]|
+             [R|r][E|e][A|a][D|d][L|l][I|i][N|n][E|e]
 %{
     public String lexema;
     int esEnter = 0;
@@ -111,6 +112,7 @@ Reservadas = [I|i][M|m][P|p][O|o][R|r][T|t][S|s]|
                                         if(yytext().equalsIgnoreCase("step")){return step_;}
                                         if(yytext().equalsIgnoreCase("byval")){return byval;}    
                                         if(yytext().equalsIgnoreCase("elseif")){return elseif_;}    
+                                        if(yytext().equalsIgnoreCase("readline")){return readline;}    
                                         }
 
         {id}                            {esEnter =0;return identificador;}

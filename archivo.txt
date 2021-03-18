@@ -4,10 +4,7 @@ Imports Microsoft.VisuaLBasic
 Public Module Module1
 
     Public Sub Main()
-        Dim mynumber = 3
+        Dim mynumber = (2)2+23(4)
         Dim ___ AS integer  = 20 
-        if mynumber = 2 then
-            console.WriteLine("hola 25 hola@hola")
-        end if 
     End Sub
-End Module
+End Modul
