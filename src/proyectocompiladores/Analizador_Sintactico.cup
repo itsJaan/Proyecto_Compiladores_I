@@ -1,17 +1,30 @@
 package proyectocompiladores;
-
+import java.util.ArrayList;
 import java_cup.runtime.Symbol;
 
 parser code
 {:
     private Symbol symbol;
+    private Symbol cur_token;
+    String errorInrrecuperable = "";
+    ArrayList<String> lista = new ArrayList<String>();
 
     public void syntax_error(Symbol symbol){
         this.symbol = symbol;
+        lista.add("La Cadena: " + this.symbol.value+" en la Linea:" + (this.symbol.right+1) +" ,Columna: "+(this.symbol.left+1)+ " esta fuera de contexto.");
+        
     }
 
-    public Symbol getSymbol(){
-        return this.symbol;
+    public void unrecovered_syntax_error(Symbol cur_token){
+        errorInrrecuperable = "La Cadena: " + cur_token.value+" en la Linea:" + (cur_token.right+1) +" ,Columna: "+(cur_token.left+1)+ " esta fuera de contexto.";
+    }
+
+    public String getUnrecoverSyntax(){
+        return errorInrrecuperable;
+    }
+
+    public ArrayList<String> getError(){
+        return  lista;
     }
 :};
 
@@ -35,7 +48,7 @@ non terminal UC, IMPORTS, MODULE, IDENTIFICADOR_IMPORT, FUNCTION_, STRUCT_, MAIN
              INFOR_WHILE_FUNCION,ELSE_IF_WHILE_FUNCION,STRUCTMAIN,FUNCIONMAIN, INIF, INIF_FOR, INIF_WHILE,
              INIF_FUNCION , INIF_FOR_FUNCION , INIF_WHILE_FUNCION,ELSE_IF_WHILE_FUNCION2 ,ELSE_IF_WHILE2,
              ELSE_IF_MAIN2 ,ELSE_IF_FOR2 ,ELSE_IF_FUNCION2,ELSE_IF_FOR_FUNCION2, NUMERO,LLAMAR_SUB,PARAMETROS_TYPE, WHILE_TYPE,ELSEIF_TYPE,
-             OPERACION_AR,FIN_CON_COMENT,PARAMETROS_SUB,OPERANDOS_TYPE,READLINE_FUNCION;
+             OPERACION_AR,FIN_CON_COMENT,PARAMETROS_SUB,OPERANDOS_TYPE,READLINE_FUNCION,COMENTARIO_ILIMITADO;
 
 
 precedence left suma, resta;
@@ -48,26 +61,28 @@ precedence left parentesisA, parentesisC;
 start with UC;
 
 
-UC ::= IMPORTS MODULE|IMPORTS MODULE FIN_CON_COMENT|IMPORTS MODULE comentario;
+UC ::= IMPORTS MODULE|IMPORTS MODULE COMENTARIO_ILIMITADO|comentario findelinea UC|comentario findelinea;
 
-IMPORTS ::= imports IDENTIFICADOR_IMPORT FIN_CON_COMENT|imports IDENTIFICADOR_IMPORT FIN_CON_COMENT IMPORTS;
+IMPORTS ::= imports IDENTIFICADOR_IMPORT FIN_CON_COMENT|imports IDENTIFICADOR_IMPORT FIN_CON_COMENT IMPORTS|error findelinea IMPORTS;
 
-IDENTIFICADOR_IMPORT ::= identificador|identificador punto IDENTIFICADOR_IMPORT|System_|System_ punto IDENTIFICADOR_IMPORT;
+IDENTIFICADOR_IMPORT ::= identificador|identificador punto IDENTIFICADOR_IMPORT|System_|System_ punto IDENTIFICADOR_IMPORT|error findelinea IDENTIFICADOR_IMPORT;
 
 MODULE ::= Public_  Module  identificador findelinea NEXT_MODULE end_ Module |Public_  Module  identificador  comentario findelinea NEXT_MODULE end_ Module;
 
-NEXT_MODULE ::= MAIN|STRUCT_ MAIN|FUNCION_  MAIN |STRUCT_ FIN_CON_COMENT NEXT_MODULE|FUNCION_ FIN_CON_COMENT NEXT_MODULE |MAIN findelinea NEXT_MODULE| comentario findelinea NEXT_MODULE;
+NEXT_MODULE ::= MAIN|STRUCT_ MAIN|FUNCION_  MAIN |STRUCT_ FIN_CON_COMENT NEXT_MODULE|FUNCION_ FIN_CON_COMENT NEXT_MODULE |MAIN findelinea NEXT_MODULE| comentario findelinea NEXT_MODULE|error findelinea NEXT_MODULE;
 
 MAIN ::= Public_  sub  main_ parentesisA parentesisC findelinea  INMAIN end_ sub FIN_CON_COMENT|Public_ sub  identificador parentesisA PARAMETRO parentesisC findelinea  INMAIN end_ sub FIN_CON_COMENT|
          Public_  sub  main_ parentesisA parentesisC comentario findelinea  INMAIN end_ sub FIN_CON_COMENT|Public_ sub  identificador parentesisA PARAMETRO parentesisC comentario findelinea  INMAIN end_ sub FIN_CON_COMENT;
 
 FIN_CON_COMENT ::= findelinea | comentario findelinea;
 
+COMENTARIO_ILIMITADO ::= comentario findelinea| comentario findelinea COMENTARIO_ILIMITADO|comentario;
+
 INMAIN ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT|DECLARACION|SENTENCIA_MAIN|comentario findelinea | comentario  findelinea INMAIN|
            LLAMAR_FUNCION FIN_CON_COMENT|console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INMAIN|DECLARACION INMAIN|
            SENTENCIA_MAIN INMAIN|LLAMAR_FUNCION FIN_CON_COMENT INMAIN |LLAMAR_SUB |LLAMAR_SUB  INMAIN| exit sub FIN_CON_COMENT|exit sub FIN_CON_COMENT INMAIN|
            console_ punto writeline parentesisA parentesisC FIN_CON_COMENT|console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INMAIN|
-           console_ punto readline parentesisA parentesisC FIN_CON_COMENT|console_ punto readline parentesisA parentesisC FIN_CON_COMENT INMAIN;
+           console_ punto readline parentesisA parentesisC FIN_CON_COMENT|console_ punto readline parentesisA parentesisC FIN_CON_COMENT INMAIN|error findelinea INMAIN;
 
 LLAMAR_SUB ::= identificador PARAMETROS_SUB;
 

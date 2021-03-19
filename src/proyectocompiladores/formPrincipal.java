@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,12 +29,13 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @author willi
  */
 
-
+        
 public class formPrincipal extends javax.swing.JFrame {
 
     /**
      * Creates new form formPrincipal
      */
+    public String errors = "";
     public formPrincipal() {
         initComponents();
         this.setLocationRelativeTo(null);
@@ -289,21 +291,44 @@ public class formPrincipal extends javax.swing.JFrame {
         // TODO add your handling code here:
         String st = txt_codigo.getText();
         Sintax s = new Sintax(new proyectocompiladores.Analizador_Sintactico(new StringReader(st)));
+        
+        
         if (st.equals("")){
             txt_sintactico.setText("");
             JOptionPane.showMessageDialog(null, "No hay ningun codigo a analizar.");
             
         }else{
+            
+            
             try {
                 s.parse();
+                
                 txt_sintactico.setText("Successful");
                 txt_sintactico.setForeground(Color.GREEN);
+               
+                
+                ArrayList<String> sym = s.getError();
+                Iterator<String> iterador = sym.iterator();
+
+                if(sym.size() > 0){
+                    while(iterador.hasNext()){
+                        String elemento = iterador.next();
+                        errors += elemento + "\n";
+                        txt_sintactico.setText(errors);
+                        txt_sintactico.setForeground(Color.RED);
+                    }
+                    
+                }
+                
             } catch (Exception ex) {
-                Symbol sym = s.getSymbol(); 
-                txt_sintactico.setText("Error de sintaxis. Linea: " + (sym.right + 1) + " Columna: " + (sym.left + 1) + " valor: " + sym.value);
+                String u = s.getUnrecoverSyntax();
+                txt_sintactico.setText("\n"+u);
                 txt_sintactico.setForeground(Color.RED);
-            }
+            }                  
+            errors = ""; 
+            
         }
+        
     }//GEN-LAST:event_btn_sinActionPerformed
 
     /**
