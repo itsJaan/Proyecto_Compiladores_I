@@ -75,29 +75,29 @@ Reservadas = [S|s][U|u][B|b]|
 
 
         {comentarios} {return new Symbol(sym.comentario, yychar, yyline, yytext());}
+
         {imports} {return new Symbol(sym.imports, yychar, yyline, yytext());}
+
         {module}  {return new Symbol(sym.Module, yychar, yyline, yytext());}
+
         {system}  {return new Symbol(sym.System_, yychar, yyline, yytext());}
+
         {public}  {return new Symbol(sym.Public_, yychar, yyline, yytext());}
+
         {dim}     {return new Symbol(sym.dim, yychar, yyline, yytext());}
+
         {end}     {return new Symbol(sym.end_, yychar, yyline, yytext());}
+
         {if}      {return new Symbol(sym.if_, yychar, yyline, yytext());}
+
         {byval}   {return new Symbol(sym.byval, yychar, yyline, yytext());}
         
         {Reservadas}                    {
-                                        
-                                        
-                                        
-                                       
-                                        
                                         if(yytext().equalsIgnoreCase("sub")){return new Symbol(sym.sub, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("for")){return new Symbol(sym.for_, yychar, yyline, yytext());}
-                                        
-                                        
+                                        if(yytext().equalsIgnoreCase("for")){return new Symbol(sym.for_, yychar, yyline, yytext());}                                     
                                         if(yytext().equalsIgnoreCase("integer")){return new Symbol(sym.integer_, yychar, yyline, yytext());}
                                         if(yytext().equalsIgnoreCase("boolean")){return new Symbol(sym.boolean_, yychar, yyline, yytext());}
                                         if(yytext().equalsIgnoreCase("string")){return new Symbol(sym.string_, yychar, yyline, yytext());}
-                                        
                                         if(yytext().equalsIgnoreCase("console")){return new Symbol(sym.console_, yychar, yyline, yytext());}
                                         if(yytext().equalsIgnoreCase("writeline")){return new Symbol(sym.writeline, yychar, yyline, yytext());}
                                         if(yytext().equalsIgnoreCase("as")){return new Symbol(sym.as, yychar, yyline, yytext());}
@@ -127,7 +127,9 @@ Reservadas = [S|s][U|u][B|b]|
                                         if(yytext().equalsIgnoreCase("elseif")){return new Symbol(sym.elseif_, yychar, yyline, yytext());}
                                         if(yytext().equalsIgnoreCase("readline")){return new Symbol(sym.readline, yychar, yyline, yytext());} 
                                         }
+
         {id}                            {return new Symbol(sym.identificador, yychar, yyline, yytext());}
+
         {operadores_relacionales}       {if(yytext().equals(">=")){return new Symbol(sym.mayorigual, yychar, yyline, yytext());}
                                         if(yytext().equals("<=")){return new Symbol(sym.menorigual, yychar, yyline, yytext());}
                                         if(yytext().equals("=")){return new Symbol(sym.igual, yychar, yyline, yytext());}
@@ -146,7 +148,7 @@ Reservadas = [S|s][U|u][B|b]|
 
         {digitos}                       {return new Symbol(sym.numero, yychar, yyline, yytext());}
 
-        {espacios}                      {/*Ignore*/}
+        
 
         {caracteres_reservados}         {
                                         if(yytext().equals(".")){return new Symbol(sym.punto, yychar, yyline, yytext());}
@@ -158,6 +160,8 @@ Reservadas = [S|s][U|u][B|b]|
                                         if(yytext().equals("}")){return new Symbol(sym.llaveC, yychar, yyline, yytext());}
                                         if(yytext().equals(",")){return new Symbol(sym.coma_, yychar, yyline, yytext());}
                                         }
+
+        {espacios}                      {/*Ignore*/}
 
         {continuacion_linea}            {return new Symbol(sym.continuaciondelinea, yychar, yyline, yytext());}
 

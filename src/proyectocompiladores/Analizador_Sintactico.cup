@@ -82,7 +82,7 @@ INMAIN ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CO
            LLAMAR_FUNCION FIN_CON_COMENT|console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INMAIN|DECLARACION INMAIN|
            SENTENCIA_MAIN INMAIN|LLAMAR_FUNCION FIN_CON_COMENT INMAIN |LLAMAR_SUB |LLAMAR_SUB  INMAIN| exit sub FIN_CON_COMENT|exit sub FIN_CON_COMENT INMAIN|
            console_ punto writeline parentesisA parentesisC FIN_CON_COMENT|console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INMAIN|
-           console_ punto readline parentesisA parentesisC FIN_CON_COMENT|console_ punto readline parentesisA parentesisC FIN_CON_COMENT INMAIN|error findelinea INMAIN;
+           console_ punto readline parentesisA parentesisC FIN_CON_COMENT|console_ punto readline parentesisA parentesisC FIN_CON_COMENT INMAIN | error findelinea INMAIN;
 
 LLAMAR_SUB ::= identificador PARAMETROS_SUB;
 
@@ -109,6 +109,11 @@ OPERACION_ARITMETICA ::= OPERANDOS_TYPE OPERADOR_ARITMETICO OPERACION_AR|
                          parentesisA OPERACION_ARITMETICA parentesisC OPERANDOS_TYPE|
                          parentesisA OPERACION_ARITMETICA parentesisC OPERADOR_ARITMETICO OPERANDOS_TYPE|
                          OPERACION_ARITMETICA parentesisA OPERACION_ARITMETICA parentesisC OPERADOR_ARITMETICO OPERANDOS_TYPE|
+                         resta parentesisA OPERACION_ARITMETICA parentesisC|
+                         resta parentesisA OPERACION_ARITMETICA parentesisC OPERACION_ARITMETICA|
+                         resta parentesisA OPERACION_ARITMETICA parentesisC OPERADOR_ARITMETICO OPERACION_ARITMETICA|
+                         resta parentesisA OPERACION_ARITMETICA parentesisC OPERANDOS_TYPE|
+                         resta parentesisA OPERACION_ARITMETICA parentesisC OPERADOR_ARITMETICO OPERANDOS_TYPE|
 
                          parentesisA OPERANDOS_TYPE parentesisC|
                          OPERACION_ARITMETICA parentesisA OPERANDOS_TYPE parentesisC|
@@ -119,7 +124,23 @@ OPERACION_ARITMETICA ::= OPERANDOS_TYPE OPERADOR_ARITMETICO OPERACION_AR|
                          parentesisA OPERANDOS_TYPE parentesisC OPERADOR_ARITMETICO OPERANDOS_TYPE|
                          OPERACION_ARITMETICA parentesisA OPERANDOS_TYPE parentesisC OPERADOR_ARITMETICO OPERANDOS_TYPE|
                          OPERANDOS_TYPE parentesisA OPERANDOS_TYPE parentesisC|
-                         parentesisA OPERANDOS_TYPE parentesisC OPERANDOS_TYPE;
+                         parentesisA OPERANDOS_TYPE parentesisC OPERANDOS_TYPE|
+                         resta parentesisA OPERANDOS_TYPE parentesisC|
+                         resta parentesisA OPERANDOS_TYPE parentesisC OPERACION_ARITMETICA|
+                         resta parentesisA OPERANDOS_TYPE parentesisC OPERADOR_ARITMETICO OPERACION_ARITMETICA|
+                         resta parentesisA OPERANDOS_TYPE parentesisC OPERADOR_ARITMETICO OPERANDOS_TYPE|
+                         resta parentesisA OPERANDOS_TYPE parentesisC OPERANDOS_TYPE|
+
+                         resta LLAMAR_FUNCION|
+                         resta LLAMAR_FUNCION OPERANDOS_TYPE|
+                         resta LLAMAR_FUNCION OPERACION_ARITMETICA|
+                         resta LLAMAR_FUNCION OPERADOR_ARITMETICO OPERACION_AR|
+                         
+                         parentesisA resta LLAMAR_FUNCION parentesisC|
+                         resta parentesisA resta LLAMAR_FUNCION parentesisC|
+                         resta parentesisA resta LLAMAR_FUNCION parentesisC OPERACION_ARITMETICA|
+                         resta parentesisA resta LLAMAR_FUNCION parentesisC OPERADOR_ARITMETICO OPERACION_ARITMETICA|
+                         resta parentesisA resta LLAMAR_FUNCION parentesisC OPERANDOS_TYPE;
                          
                          
                          
@@ -242,7 +263,7 @@ INFOR_WHILE ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC F
                 console_ punto writeline parentesisA parentesisC FIN_CON_COMENT|console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INFOR_WHILE|
                 console_ punto readline parentesisA parentesisC FIN_CON_COMENT|console_ punto readline parentesisA parentesisC FIN_CON_COMENT INFOR_WHILE;
 
-LLAMAR_FUNCION ::= identificador parentesisA parentesisC| identificador parentesisA PARAMETRO_SENCILLO;
+LLAMAR_FUNCION ::=identificador parentesisA parentesisC| identificador parentesisA PARAMETRO_SENCILLO;
 
 PARAMETRO_SENCILLO ::=  PARAMETROS_TYPE  parentesisC|PARAMETROS_TYPE coma_ PARAMETRO_SENCILLO|parentesisA PARAMETROS_TYPE parentesisC coma_ PARAMETRO_SENCILLO|
                         parentesisA PARAMETROS_TYPE parentesisC  parentesisC;
