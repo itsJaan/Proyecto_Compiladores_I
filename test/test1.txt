@@ -1,13 +1,8 @@
-Imports System
-Imports Microsoft.VisuaLBasic
-
 Public Module Module1
 
-    Public Sub Main()
+   Sub Main()
         Dim mynumber = 3
         Dim ___ AS integer  = 20 
-        if mynumber = 2 then
-            console.WriteLine("hola 25 hola@hola")
-        end if 
+        console.WriteLine("hola 25 hola@hola")
     End Sub
 End Module

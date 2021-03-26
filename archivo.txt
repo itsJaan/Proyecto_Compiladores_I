@@ -1,10 +1,13 @@
-Impor System
+Imports System
 Imports Microsoft.VisuaLBasic
-@@@@
+
 Public Module Module1
-@@@@
+
     Public Sub Main()
-        Dim mynumber = 3
-        Dim ___ AS integer  = 20         
-End Sub
+        Dim mynumber = 
+        Dim ___ AS integer  = 
+        if mynumber =  then
+            console.WriteLne("hola 25 hola@hola")
+        end if 
+    End Sub
 End Module

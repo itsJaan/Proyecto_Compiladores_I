@@ -308,8 +308,11 @@ public class formPrincipal extends javax.swing.JFrame {
                
                 
                 ArrayList<String> sym = s.getError();
+                System.out.println(sym);
                 Iterator<String> iterador = sym.iterator();
 
+                
+                
                 if(sym.size() > 0){
                     while(iterador.hasNext()){
                         String elemento = iterador.next();
@@ -320,10 +323,21 @@ public class formPrincipal extends javax.swing.JFrame {
                     
                 }
                 
-            } catch (Exception ex) {
-                String u = s.getUnrecoverSyntax();
-                txt_sintactico.setText("\n"+u);
+                String t = s.getUnrecovery();
+                if(!t.equals("")){   
+                System.out.println("Entre al unrecovery");
+                System.out.println("El valor del unrecovery es: " + t);
+                txt_sintactico.setText(t);
                 txt_sintactico.setForeground(Color.RED);
+                }
+               
+
+            } catch (Exception ex) {
+//                String t = s.getUnrecovery();
+//                System.out.println("Entre al exception");
+//                txt_sintactico.setText(t);
+//                txt_sintactico.setForeground(Color.RED);
+                
             }                  
             errors = ""; 
             

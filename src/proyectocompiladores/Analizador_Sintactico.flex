@@ -6,6 +6,7 @@ import java_cup.runtime.Symbol;
 %class Analizador_Sintactico
 %type java_cup.runtime.Symbol
 %line
+%column
 %char
 %cup
 %full
@@ -74,102 +75,103 @@ Reservadas = [S|s][U|u][B|b]|
 
 
 
-        {comentarios} {return new Symbol(sym.comentario, yychar, yyline, yytext());}
+        {comentarios} {return new Symbol(sym.comentario, yyline, yycolumn, yytext());}
 
-        {imports} {return new Symbol(sym.imports, yychar, yyline, yytext());}
+        {imports} {return new Symbol(sym.imports, yyline, yycolumn, yytext());}
 
-        {module}  {return new Symbol(sym.Module, yychar, yyline, yytext());}
+        {module}  {return new Symbol(sym.Module, yyline, yycolumn, yytext());}
 
-        {system}  {return new Symbol(sym.System_, yychar, yyline, yytext());}
+        {system}  {return new Symbol(sym.System_, yyline, yycolumn, yytext());}
 
-        {public}  {return new Symbol(sym.Public_, yychar, yyline, yytext());}
+        {public}  {return new Symbol(sym.Public_, yyline, yycolumn, yytext());}
 
-        {dim}     {return new Symbol(sym.dim, yychar, yyline, yytext());}
+        {dim}     {return new Symbol(sym.dim, yyline, yycolumn, yytext());}
 
-        {end}     {return new Symbol(sym.end_, yychar, yyline, yytext());}
+        {end}     {return new Symbol(sym.end_, yyline, yycolumn, yytext());}
 
-        {if}      {return new Symbol(sym.if_, yychar, yyline, yytext());}
+        {if}      {return new Symbol(sym.if_, yyline, yycolumn, yytext());}
 
-        {byval}   {return new Symbol(sym.byval, yychar, yyline, yytext());}
+        {byval}   {return new Symbol(sym.byval, yyline, yycolumn, yytext());}
         
         {Reservadas}                    {
-                                        if(yytext().equalsIgnoreCase("sub")){return new Symbol(sym.sub, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("for")){return new Symbol(sym.for_, yychar, yyline, yytext());}                                     
-                                        if(yytext().equalsIgnoreCase("integer")){return new Symbol(sym.integer_, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("boolean")){return new Symbol(sym.boolean_, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("string")){return new Symbol(sym.string_, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("console")){return new Symbol(sym.console_, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("writeline")){return new Symbol(sym.writeline, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("as")){return new Symbol(sym.as, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("do")){return new Symbol(sym.do_, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("while")){return new Symbol(sym.while_, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("struct")){return new Symbol(sym.struct_, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("then")){return new Symbol(sym.then, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("else")){return new Symbol(sym.else_, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("function")){return new Symbol(sym.function_, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("return")){return new Symbol(sym.return_, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("next")){return new Symbol(sym.next, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("private")){return new Symbol(sym.private_, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("loop")){return new Symbol(sym.loop, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("exit")){return new Symbol(sym.exit, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("until")){return new Symbol(sym.until, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("to")){return new Symbol(sym.to, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("and")){return new Symbol(sym.and, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("or")){return new Symbol(sym.or, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("true")){return new Symbol(sym.true_, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("false")){return new Symbol(sym.false_, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("like")){return new Symbol(sym.like, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("mod")){return new Symbol(sym.mod, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("int")){return new Symbol(sym.int_, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("null")){return new Symbol(sym.null_, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("main")){return new Symbol(sym.main_, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("step")){return new Symbol(sym.step_, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("elseif")){return new Symbol(sym.elseif_, yychar, yyline, yytext());}
-                                        if(yytext().equalsIgnoreCase("readline")){return new Symbol(sym.readline, yychar, yyline, yytext());} 
+                                        if(yytext().equalsIgnoreCase("sub")){return new Symbol(sym.sub, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("for")){return new Symbol(sym.for_, yyline, yycolumn, yytext());}                                   
+                                        if(yytext().equalsIgnoreCase("integer")){return new Symbol(sym.integer_, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("boolean")){return new Symbol(sym.boolean_, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("string")){return new Symbol(sym.string_, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("console")){return new Symbol(sym.console_, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("writeline")){return new Symbol(sym.writeline, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("as")){return new Symbol(sym.as, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("do")){return new Symbol(sym.do_, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("while")){return new Symbol(sym.while_, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("struct")){return new Symbol(sym.struct_, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("then")){return new Symbol(sym.then, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("else")){return new Symbol(sym.else_, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("function")){return new Symbol(sym.function_, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("return")){return new Symbol(sym.return_, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("next")){return new Symbol(sym.next, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("private")){return new Symbol(sym.private_, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("loop")){return new Symbol(sym.loop, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("exit")){return new Symbol(sym.exit, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("until")){return new Symbol(sym.until, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("to")){return new Symbol(sym.to, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("and")){return new Symbol(sym.and, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("or")){return new Symbol(sym.or, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("true")){return new Symbol(sym.true_, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("false")){return new Symbol(sym.false_, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("like")){return new Symbol(sym.like, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("mod")){return new Symbol(sym.mod, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("int")){return new Symbol(sym.int_, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("null")){return new Symbol(sym.null_, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("main")){return new Symbol(sym.main_, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("step")){return new Symbol(sym.step_, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("elseif")){return new Symbol(sym.elseif_, yyline, yycolumn, yytext());}
+                                        if(yytext().equalsIgnoreCase("readline")){return new Symbol(sym.readline, yyline, yycolumn, yytext());}
                                         }
 
-        {id}                            {return new Symbol(sym.identificador, yychar, yyline, yytext());}
+        {id}                            {return new Symbol(sym.identificador, yyline, yycolumn, yytext());}
 
-        {operadores_relacionales}       {if(yytext().equals(">=")){return new Symbol(sym.mayorigual, yychar, yyline, yytext());}
-                                        if(yytext().equals("<=")){return new Symbol(sym.menorigual, yychar, yyline, yytext());}
-                                        if(yytext().equals("=")){return new Symbol(sym.igual, yychar, yyline, yytext());}
-                                        if(yytext().equals(">")){return new Symbol(sym.mayor, yychar, yyline, yytext());}
-                                        if(yytext().equals("<")){return new Symbol(sym.menor, yychar, yyline, yytext());}}
-
-        {operadores_aritmeticos}        {if(yytext().equals("+")){return new Symbol(sym.suma, yychar, yyline, yytext());}
-                                        if(yytext().equals("-")){return new Symbol(sym.resta, yychar, yyline, yytext());}
-                                        if(yytext().equals("*")){return new Symbol(sym.mult, yychar, yyline, yytext());}
-                                        if(yytext().equals("/")){return new Symbol(sym.div, yychar, yyline, yytext());}
-                                        if(yytext().equals("^")){return new Symbol(sym.potencia, yychar, yyline, yytext());}
-                                        if(yytext().equals("%")){return new Symbol(sym.mod_, yychar, yyline, yytext());}
+        {operadores_relacionales}       {if(yytext().equals(">=")){return new Symbol(sym.mayorigual, yyline, yycolumn, yytext());}
+                                        if(yytext().equals("<=")){return new Symbol(sym.menorigual, yyline, yycolumn, yytext());}
+                                        if(yytext().equals("=")){return new Symbol(sym.igual, yyline, yycolumn, yytext());}
+                                        if(yytext().equals(">")){return new Symbol(sym.mayor, yyline, yycolumn, yytext());}
+                                        if(yytext().equals("<")){return new Symbol(sym.menor, yyline, yycolumn, yytext());}
                                         }
 
-        {textos}                        {return new Symbol(sym.texto_, yychar, yyline, yytext());}
+        {operadores_aritmeticos}        {if(yytext().equals("+")){return new Symbol(sym.suma, yyline, yycolumn, yytext());}
+                                        if(yytext().equals("-")){return new Symbol(sym.resta, yyline, yycolumn, yytext());}
+                                        if(yytext().equals("*")){return new Symbol(sym.mult, yyline, yycolumn, yytext());}
+                                        if(yytext().equals("/")){return new Symbol(sym.div, yyline, yycolumn, yytext());}
+                                        if(yytext().equals("^")){return new Symbol(sym.potencia, yyline, yycolumn, yytext());}
+                                        if(yytext().equals("%")){return new Symbol(sym.mod_, yyline, yycolumn, yytext());}
+                                        }
 
-        {digitos}                       {return new Symbol(sym.numero, yychar, yyline, yytext());}
+        {textos}                        {return new Symbol(sym.texto_, yyline, yycolumn, yytext());}
+
+        {digitos}                       {return new Symbol(sym.numero, yyline, yycolumn, yytext());}
 
         
 
         {caracteres_reservados}         {
-                                        if(yytext().equals(".")){return new Symbol(sym.punto, yychar, yyline, yytext());}
-                                        if(yytext().equals("\"")){return new Symbol(sym.comillaD, yychar, yyline, yytext());}
-                                        if(yytext().equals("\'")){return new Symbol(sym.comillaS, yychar, yyline, yytext());}
-                                        if(yytext().equals("(")){return new Symbol(sym.parentesisA, yychar, yyline, yytext());}
-                                        if(yytext().equals(")")){return new Symbol(sym.parentesisC, yychar, yyline, yytext());}
-                                        if(yytext().equals("{")){return new Symbol(sym.llaveA, yychar, yyline, yytext());}
-                                        if(yytext().equals("}")){return new Symbol(sym.llaveC, yychar, yyline, yytext());}
-                                        if(yytext().equals(",")){return new Symbol(sym.coma_, yychar, yyline, yytext());}
+                                        if(yytext().equals(".")){return new Symbol(sym.punto, yyline, yycolumn, yytext());}
+                                        if(yytext().equals("\"")){return new Symbol(sym.comillaD, yyline, yycolumn, yytext());}
+                                        if(yytext().equals("\'")){return new Symbol(sym.comillaS, yyline, yycolumn, yytext());}
+                                        if(yytext().equals("(")){return new Symbol(sym.parentesisA, yyline, yycolumn, yytext());}
+                                        if(yytext().equals(")")){return new Symbol(sym.parentesisC, yyline, yycolumn, yytext());}
+                                        if(yytext().equals("{")){return new Symbol(sym.llaveA, yyline, yycolumn, yytext());}
+                                        if(yytext().equals("}")){return new Symbol(sym.llaveC, yyline, yycolumn, yytext());}
+                                        if(yytext().equals(",")){return new Symbol(sym.coma_, yyline, yycolumn, yytext());}
                                         }
 
         {espacios}                      {/*Ignore*/}
 
-        {continuacion_linea}            {return new Symbol(sym.continuaciondelinea, yychar, yyline, yytext());}
+        {continuacion_linea}            {return new Symbol(sym.continuaciondelinea, yyline, yycolumn, yytext());}
 
-        {findelinea}                    {return new Symbol(sym.findelinea, yychar, yyline, yytext());}
+        {findelinea}                    {return new Symbol(sym.findelinea, yyline, yycolumn, yytext());}
 
-
+        
         .                               {
-                                        return new Symbol(sym.error, yychar, yyline, yytext());
+                                        return new Symbol(sym.error, yyline, yycolumn, yytext());
                                         
                                         }
 

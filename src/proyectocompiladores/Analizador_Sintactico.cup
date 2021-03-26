@@ -4,27 +4,29 @@ import java_cup.runtime.Symbol;
 
 parser code
 {:
-    private Symbol symbol;
-    private Symbol cur_token;
-    String errorInrrecuperable = "";
+    public Symbol symbol;
+    public String token;
+    public Symbol irrecuperable;
     ArrayList<String> lista = new ArrayList<String>();
 
+ @Override
     public void syntax_error(Symbol symbol){
-        this.symbol = symbol;
-        lista.add("La Cadena: " + this.symbol.value+" en la Linea:" + (this.symbol.right+1) +" ,Columna: "+(this.symbol.left+1)+ " esta fuera de contexto.");
-        
+        if(symbol.value.toString().startsWith("\n")){symbol.value = " salto de linea ";}
+        if(!symbol.value.toString().startsWith("Error irrecuperable")){
+        lista.add("Error en la linea: " + (symbol.left+1)  + " ,Columna: " + (symbol.right+1) + ". NO SE ESPARABA UN: " + symbol.value);
+        irrecuperable = symbol;
+        }
     }
-
-    public void unrecovered_syntax_error(Symbol cur_token){
-        errorInrrecuperable = "La Cadena: " + cur_token.value+" en la Linea:" + (cur_token.right+1) +" ,Columna: "+(cur_token.left+1)+ " esta fuera de contexto.";
+ @Override
+    public void unrecovered_syntax_error(Symbol cur_token) throws java.lang.Exception{
+        token = "Error irrecuperable en la linea: " + (irrecuperable.left+1)  + " ,Columna: " + (irrecuperable.right+1) + ". NO SE ESPARABA UN: " + irrecuperable.value;
     }
-
-    public String getUnrecoverSyntax(){
-        return errorInrrecuperable;
-    }
-
     public ArrayList<String> getError(){
         return  lista;
+    }
+
+    public String getUnrecovery(){
+        return token;
     }
 :};
 
@@ -48,7 +50,8 @@ non terminal UC, IMPORTS, MODULE, IDENTIFICADOR_IMPORT, FUNCTION_, STRUCT_, MAIN
              INFOR_WHILE_FUNCION,ELSE_IF_WHILE_FUNCION,STRUCTMAIN,FUNCIONMAIN, INIF, INIF_FOR, INIF_WHILE,
              INIF_FUNCION , INIF_FOR_FUNCION , INIF_WHILE_FUNCION,ELSE_IF_WHILE_FUNCION2 ,ELSE_IF_WHILE2,
              ELSE_IF_MAIN2 ,ELSE_IF_FOR2 ,ELSE_IF_FUNCION2,ELSE_IF_FOR_FUNCION2, NUMERO,LLAMAR_SUB,PARAMETROS_TYPE, WHILE_TYPE,ELSEIF_TYPE,
-             OPERACION_AR,FIN_CON_COMENT,PARAMETROS_SUB,OPERANDOS_TYPE,READLINE_FUNCION,COMENTARIO_ILIMITADO;
+             OPERACION_AR,FIN_CON_COMENT,PARAMETROS_SUB,OPERANDOS_TYPE,READLINE_FUNCION,COMENTARIO_ILIMITADO,ULTIMO,PIE_SUB,PIE_MODULE,PIE_FUNCION,
+             PIE_STRUCT;
 
 
 precedence left suma, resta;
@@ -61,30 +64,73 @@ precedence left parentesisA, parentesisC;
 start with UC;
 
 
-UC ::= IMPORTS MODULE|IMPORTS MODULE COMENTARIO_ILIMITADO|comentario findelinea UC|comentario findelinea;
+UC ::= MODULE|IMPORTS MODULE COMENTARIO_ILIMITADO|comentario findelinea UC|comentario findelinea;
 
-IMPORTS ::= imports IDENTIFICADOR_IMPORT FIN_CON_COMENT|imports IDENTIFICADOR_IMPORT FIN_CON_COMENT IMPORTS|error findelinea IMPORTS;
 
-IDENTIFICADOR_IMPORT ::= identificador|identificador punto IDENTIFICADOR_IMPORT|System_|System_ punto IDENTIFICADOR_IMPORT|error findelinea IDENTIFICADOR_IMPORT;
+MODULE ::= Public_  Module  identificador findelinea NEXT_MODULE PIE_MODULE|
+           Public_  Module  error findelinea NEXT_MODULE PIE_MODULE|
+           Public_  error  identificador findelinea NEXT_MODULE PIE_MODULE|
+           error  Module  identificador findelinea NEXT_MODULE PIE_MODULE|
+           Public_  Module  identificador  comentario findelinea NEXT_MODULE PIE_MODULE|
+           Public_  Module  identificador  error findelinea NEXT_MODULE PIE_MODULE|
+           Public_  Module  error  comentario findelinea NEXT_MODULE PIE_MODULE|
+           Public_  error  identificador  comentario findelinea NEXT_MODULE PIE_MODULE|
+           error  Module  identificador  comentario findelinea NEXT_MODULE PIE_MODULE
+;
+PIE_MODULE ::= end_ Module|end_ error
+;
+NEXT_MODULE ::= MAIN|STRUCT_ MAIN|FUNCION_  MAIN |STRUCT_ FIN_CON_COMENT NEXT_MODULE|FUNCION_ FIN_CON_COMENT NEXT_MODULE |MAIN findelinea NEXT_MODULE| comentario findelinea NEXT_MODULE;
 
-MODULE ::= Public_  Module  identificador findelinea NEXT_MODULE end_ Module |Public_  Module  identificador  comentario findelinea NEXT_MODULE end_ Module;
+MAIN ::=   sub  main_ parentesisA parentesisC findelinea  INMAIN PIE_SUB|
+           error  main_ parentesisA parentesisC findelinea  INMAIN PIE_SUB|
+           sub  main_ error parentesisC findelinea  INMAIN PIE_SUB|
+           sub  main_ parentesisA error findelinea  INMAIN PIE_SUB|
+           sub  identificador parentesisA PARAMETRO parentesisC findelinea  INMAIN PIE_SUB|
+           error  identificador parentesisA PARAMETRO parentesisC findelinea  INMAIN PIE_SUB|
+           sub  error parentesisA PARAMETRO parentesisC findelinea  INMAIN PIE_SUB|
+           sub  identificador error PARAMETRO parentesisC findelinea  INMAIN PIE_SUB|
+           sub  identificador parentesisA error parentesisC findelinea  INMAIN PIE_SUB|
+           sub  identificador parentesisA PARAMETRO error findelinea  INMAIN PIE_SUB|
+           sub  main_ parentesisA parentesisC comentario findelinea  INMAIN PIE_SUB|
+           error  main_ parentesisA parentesisC comentario findelinea  INMAIN PIE_SUB|
+           sub  main_ error parentesisC comentario findelinea  INMAIN PIE_SUB|
+           sub  main_ parentesisA error comentario findelinea  INMAIN PIE_SUB|
+           sub  main_ parentesisA parentesisC error findelinea  INMAIN PIE_SUB|
+           sub  identificador parentesisA PARAMETRO parentesisC comentario findelinea  INMAIN PIE_SUB|
+           error  identificador parentesisA PARAMETRO parentesisC comentario findelinea  INMAIN PIE_SUB|
+           sub  error parentesisA PARAMETRO parentesisC comentario findelinea  INMAIN PIE_SUB|
+           sub  identificador error PARAMETRO parentesisC comentario findelinea  INMAIN PIE_SUB|
+           sub  identificador parentesisA error parentesisC comentario findelinea  INMAIN PIE_SUB|
+           sub  identificador parentesisA PARAMETRO error comentario findelinea  INMAIN PIE_SUB|
+           sub  identificador parentesisA PARAMETRO parentesisC error findelinea  INMAIN PIE_SUB|
+;
 
-NEXT_MODULE ::= MAIN|STRUCT_ MAIN|FUNCION_  MAIN |STRUCT_ FIN_CON_COMENT NEXT_MODULE|FUNCION_ FIN_CON_COMENT NEXT_MODULE |MAIN findelinea NEXT_MODULE| comentario findelinea NEXT_MODULE|error findelinea NEXT_MODULE;
-
-MAIN ::= Public_  sub  main_ parentesisA parentesisC findelinea  INMAIN end_ sub FIN_CON_COMENT|Public_ sub  identificador parentesisA PARAMETRO parentesisC findelinea  INMAIN end_ sub FIN_CON_COMENT|
-         Public_  sub  main_ parentesisA parentesisC comentario findelinea  INMAIN end_ sub FIN_CON_COMENT|Public_ sub  identificador parentesisA PARAMETRO parentesisC comentario findelinea  INMAIN end_ sub FIN_CON_COMENT;
 
 FIN_CON_COMENT ::= findelinea | comentario findelinea;
 
 COMENTARIO_ILIMITADO ::= comentario findelinea| comentario findelinea COMENTARIO_ILIMITADO|comentario;
 
-INMAIN ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT|DECLARACION|SENTENCIA_MAIN|comentario findelinea | comentario  findelinea INMAIN|
-           LLAMAR_FUNCION FIN_CON_COMENT|console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INMAIN|DECLARACION INMAIN|
-           SENTENCIA_MAIN INMAIN|LLAMAR_FUNCION FIN_CON_COMENT INMAIN |LLAMAR_SUB |LLAMAR_SUB  INMAIN| exit sub FIN_CON_COMENT|exit sub FIN_CON_COMENT INMAIN|
-           console_ punto writeline parentesisA parentesisC FIN_CON_COMENT|console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INMAIN|
-           console_ punto readline parentesisA parentesisC FIN_CON_COMENT|console_ punto readline parentesisA parentesisC FIN_CON_COMENT INMAIN | error findelinea INMAIN;
+INMAIN ::= ULTIMO|comentario  findelinea INMAIN|
+           console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INMAIN|DECLARACION INMAIN|
+           SENTENCIA_MAIN INMAIN|LLAMAR_FUNCION FIN_CON_COMENT INMAIN |LLAMAR_SUB  INMAIN| exit sub FIN_CON_COMENT INMAIN|
+           console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INMAIN|
+           console_ punto readline parentesisA parentesisC FIN_CON_COMENT INMAIN |error findelinea INMAIN|exit error FIN_CON_COMENT INMAIN|error sub FIN_CON_COMENT INMAIN;
 
-LLAMAR_SUB ::= identificador PARAMETROS_SUB;
+ULTIMO ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT
+            |DECLARACION
+            |SENTENCIA_MAIN
+            |comentario findelinea 
+            |LLAMAR_FUNCION FIN_CON_COMENT
+            |LLAMAR_SUB 
+            |exit sub FIN_CON_COMENT
+            |error sub FIN_CON_COMENT
+            |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT
+            |console_ punto readline parentesisA parentesisC FIN_CON_COMENT
+            |error findelinea
+            |error PIE_SUB;
+       
+PIE_SUB ::= end_ sub FIN_CON_COMENT|end_ error FIN_CON_COMENT;
+LLAMAR_SUB ::= identificador PARAMETROS_SUB|identificador error findelinea;
 
 PARAMETROS_SUB ::= PARAMETROS_TYPE FIN_CON_COMENT |PARAMETROS_TYPE coma_ PARAMETROS_SUB|parentesisA PARAMETROS_TYPE parentesisC coma_ PARAMETROS_SUB|
                    parentesisA PARAMETROS_TYPE parentesisC FIN_CON_COMENT;
@@ -270,16 +316,42 @@ PARAMETRO_SENCILLO ::=  PARAMETROS_TYPE  parentesisC|PARAMETROS_TYPE coma_ PARAM
 
 PARAMETROS_TYPE ::= identificador|BOOLEAN|NUMERO;
 
-DECLARACIONSENCILLA ::= dim identificador as TYPE_ FIN_CON_COMENT|dim identificador as TYPE_ FIN_CON_COMENT DECLARACIONSENCILLA;
+DECLARACIONSENCILLA ::= dim identificador as TYPE_ FIN_CON_COMENT
+                       |dim error as TYPE_ FIN_CON_COMENT
+                       |dim identificador error TYPE_ FIN_CON_COMENT
+                       |dim identificador as error FIN_CON_COMENT
+                       |dim identificador as TYPE_ FIN_CON_COMENT DECLARACIONSENCILLA
+                       |dim error as TYPE_ FIN_CON_COMENT DECLARACIONSENCILLA
+                       |dim identificador error TYPE_ FIN_CON_COMENT DECLARACIONSENCILLA
+                  
+                        ;
 
-STRUCT_ ::= Public_ struct_ identificador FIN_CON_COMENT DECLARACIONSENCILLA end_ struct_ ;
+STRUCT_ ::= Public_ struct_ identificador FIN_CON_COMENT DECLARACIONSENCILLA PIE_STRUCT |
+            error struct_ identificador FIN_CON_COMENT DECLARACIONSENCILLA PIE_STRUCT |
+            Public_ error identificador FIN_CON_COMENT DECLARACIONSENCILLA PIE_STRUCT |
+            Public_ struct_ error FIN_CON_COMENT DECLARACIONSENCILLA PIE_STRUCT ;
 
-FUNCION_ ::= private_ function_ identificador parentesisA PARAMETRO parentesisC as TYPE_ FIN_CON_COMENT INFUNCION end_ function_;
+PIE_STRUCT ::= end_ struct_|error struct_|end_ error;
+
+FUNCION_ ::= private_ function_ identificador parentesisA PARAMETRO parentesisC as TYPE_ FIN_CON_COMENT INFUNCION PIE_FUNCION
+            |error function_ identificador parentesisA PARAMETRO parentesisC as TYPE_ FIN_CON_COMENT INFUNCION PIE_FUNCION
+            |private_ error identificador parentesisA PARAMETRO parentesisC as TYPE_ FIN_CON_COMENT INFUNCION PIE_FUNCION
+            |private_ function_ error parentesisA PARAMETRO parentesisC as TYPE_ FIN_CON_COMENT INFUNCION PIE_FUNCION
+            |private_ function_ identificador error PARAMETRO parentesisC as TYPE_ FIN_CON_COMENT INFUNCION PIE_FUNCION
+            |private_ function_ identificador parentesisA error parentesisC as TYPE_ FIN_CON_COMENT INFUNCION PIE_FUNCION
+            |private_ function_ identificador parentesisA PARAMETRO error as TYPE_ FIN_CON_COMENT INFUNCION PIE_FUNCION
+            |private_ function_ identificador parentesisA PARAMETRO parentesisC error TYPE_ FIN_CON_COMENT INFUNCION PIE_FUNCION
+            |private_ function_ identificador parentesisA PARAMETRO parentesisC as error FIN_CON_COMENT INFUNCION PIE_FUNCION
+            
+
+;
+
+PIE_FUNCION ::= end_ function_|error function_|end_ error;
 
 PARAMETRO ::= identificador as TYPE_|identificador as TYPE_ coma_ PARAMETRO|byval identificador as TYPE_ coma_ PARAMETRO|byval identificador as TYPE_;
 
-INFUNCION ::=  console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT|DECLARACION|SENTENCIA_FUNCION|comentario findelinea | comentario  findelinea INFUNCION|
-               LLAMAR_FUNCION FIN_CON_COMENT|console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INFUNCION|DECLARACION INFUNCION|
+INFUNCION ::=  console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT|SENTENCIA_FUNCION|comentario findelinea | comentario  findelinea INFUNCION|
+               LLAMAR_FUNCION FIN_CON_COMENT|console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INFUNCION|
                SENTENCIA_FUNCION INFUNCION|LLAMAR_FUNCION FIN_CON_COMENT INFUNCION|LLAMAR_SUB |LLAMAR_SUB  INFUNCION|exit function_ FIN_CON_COMENT INFUNCION|exit function_ FIN_CON_COMENT|
                console_ punto writeline parentesisA parentesisC FIN_CON_COMENT|console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INFUNCION|
                console_ punto readline parentesisA parentesisC FIN_CON_COMENT|console_ punto readline parentesisA parentesisC FIN_CON_COMENT INFUNCION;
