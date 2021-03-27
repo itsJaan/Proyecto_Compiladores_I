@@ -5,6 +5,7 @@
  */
 package proyectocompiladores;
 
+import ArbolAST.Arbol;
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
@@ -64,6 +65,7 @@ public class formPrincipal extends javax.swing.JFrame {
         txt_sintactico = new javax.swing.JTextArea();
         btn_sin = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         txt_lexico1.setEditable(false);
         txt_lexico1.setColumns(20);
@@ -122,6 +124,13 @@ public class formPrincipal extends javax.swing.JFrame {
 
         jLabel3.setText("Analisis Sintactico");
 
+        jButton1.setText("Arbol AST");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -135,14 +144,6 @@ public class formPrincipal extends javax.swing.JFrame {
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(109, 109, 109)
-                .addComponent(btn_importar)
-                .addGap(302, 302, 302)
-                .addComponent(btn_analisis_lexico)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btn_sin)
-                .addGap(142, 142, 142))
-            .addGroup(layout.createSequentialGroup()
                 .addGap(147, 147, 147)
                 .addComponent(jLabel1)
                 .addGap(354, 354, 354)
@@ -150,6 +151,16 @@ public class formPrincipal extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel3)
                 .addGap(161, 161, 161))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(109, 109, 109)
+                .addComponent(btn_importar)
+                .addGap(302, 302, 302)
+                .addComponent(btn_analisis_lexico)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_sin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(142, 142, 142))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -169,7 +180,9 @@ public class formPrincipal extends javax.swing.JFrame {
                     .addComponent(btn_importar)
                     .addComponent(btn_analisis_lexico)
                     .addComponent(btn_sin))
-                .addGap(48, 48, 48))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton1)
+                .addGap(14, 14, 14))
         );
 
         pack();
@@ -291,7 +304,7 @@ public class formPrincipal extends javax.swing.JFrame {
         // TODO add your handling code here:
         String st = txt_codigo.getText();
         Sintax s = new Sintax(new proyectocompiladores.Analizador_Sintactico(new StringReader(st)));
-        
+       
         
         if (st.equals("")){
             txt_sintactico.setText("");
@@ -302,7 +315,6 @@ public class formPrincipal extends javax.swing.JFrame {
             
             try {
                 s.parse();
-                
                 txt_sintactico.setText("Successful");
                 txt_sintactico.setForeground(Color.GREEN);
                
@@ -330,8 +342,6 @@ public class formPrincipal extends javax.swing.JFrame {
                 txt_sintactico.setText(t);
                 txt_sintactico.setForeground(Color.RED);
                 }
-               
-
             } catch (Exception ex) {
 //                String t = s.getUnrecovery();
 //                System.out.println("Entre al exception");
@@ -344,6 +354,18 @@ public class formPrincipal extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_btn_sinActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+       
+        String st = txt_codigo.getText();
+        Sintax s = new Sintax(new proyectocompiladores.Analizador_Sintactico(new StringReader(st)));
+        try{
+            s.getArbol().imprimir();
+        }catch(Exception e){
+            System.out.println("error: " + e);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -384,6 +406,7 @@ public class formPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton btn_analisis_lexico;
     private javax.swing.JButton btn_importar;
     private javax.swing.JButton btn_sin;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

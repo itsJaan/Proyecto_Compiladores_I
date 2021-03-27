@@ -1,6 +1,9 @@
 package proyectocompiladores;
 import java.util.ArrayList;
 import java_cup.runtime.Symbol;
+import ArbolAST.Arbol;
+import ArbolAST.Nodo;
+
 
 parser code
 {:
@@ -8,7 +11,11 @@ parser code
     public String token;
     public Symbol irrecuperable;
     ArrayList<String> lista = new ArrayList<String>();
-
+    public static Arbol arbol;
+    public Nodo n_module;
+ 
+    
+    
  @Override
     public void syntax_error(Symbol symbol){
         if(symbol.value.toString().startsWith("\n")){symbol.value = " salto de linea ";}
@@ -24,7 +31,9 @@ parser code
     public ArrayList<String> getError(){
         return  lista;
     }
-
+    public Arbol getArbol(){
+        return arbol;
+    }
     public String getUnrecovery(){
         return token;
     }
@@ -67,19 +76,20 @@ start with UC;
 UC ::= MODULE|IMPORTS MODULE COMENTARIO_ILIMITADO|comentario findelinea UC|comentario findelinea;
 
 
-MODULE ::= Public_  Module  identificador findelinea NEXT_MODULE PIE_MODULE|
-           Public_  Module  error findelinea NEXT_MODULE PIE_MODULE|
-           Public_  error  identificador findelinea NEXT_MODULE PIE_MODULE|
-           error  Module  identificador findelinea NEXT_MODULE PIE_MODULE|
-           Public_  Module  identificador  comentario findelinea NEXT_MODULE PIE_MODULE|
-           Public_  Module  identificador  error findelinea NEXT_MODULE PIE_MODULE|
-           Public_  Module  error  comentario findelinea NEXT_MODULE PIE_MODULE|
-           Public_  error  identificador  comentario findelinea NEXT_MODULE PIE_MODULE|
-           error  Module  identificador  comentario findelinea NEXT_MODULE PIE_MODULE
-;
-PIE_MODULE ::= end_ Module|end_ error
-;
-NEXT_MODULE ::= MAIN|STRUCT_ MAIN|FUNCION_  MAIN |STRUCT_ FIN_CON_COMENT NEXT_MODULE|FUNCION_ FIN_CON_COMENT NEXT_MODULE |MAIN findelinea NEXT_MODULE| comentario findelinea NEXT_MODULE;
+MODULE ::=  Public_  Module  identificador findelinea NEXT_MODULE PIE_MODULE {: parser.n_module = new Nodo("modulo");
+                                                                                parser.arbol= new Arbol(parser.n_module);
+                                                                              :}
+            |Public_  Module  error findelinea NEXT_MODULE PIE_MODULE|
+            Public_  error  identificador findelinea NEXT_MODULE PIE_MODULE|
+            error  Module  identificador findelinea NEXT_MODULE PIE_MODULE|
+            Public_  Module  identificador  comentario findelinea NEXT_MODULE PIE_MODULE|
+            Public_  Module  identificador  error findelinea NEXT_MODULE PIE_MODULE|
+            Public_  Module  error  comentario findelinea NEXT_MODULE PIE_MODULE|
+            Public_  error  identificador  comentario findelinea NEXT_MODULE PIE_MODULE|
+            error  Module  identificador  comentario findelinea NEXT_MODULE PIE_MODULE;
+PIE_MODULE ::= end_ Module|end_ error;
+NEXT_MODULE ::= MAIN                                                            
+                |STRUCT_ MAIN|FUNCION_  MAIN |STRUCT_ FIN_CON_COMENT NEXT_MODULE|FUNCION_ FIN_CON_COMENT NEXT_MODULE |MAIN findelinea NEXT_MODULE| comentario findelinea NEXT_MODULE;
 
 MAIN ::=   sub  main_ parentesisA parentesisC findelinea  INMAIN PIE_SUB|
            error  main_ parentesisA parentesisC findelinea  INMAIN PIE_SUB|
@@ -198,7 +208,7 @@ OPERACION_AR ::= OPERANDOS_TYPE|OPERACION_ARITMETICA;
 DECLARACION ::= dim  identificador  as  TYPE_ FIN_CON_COMENT|dim  identificador  as  TYPE_  igual  TYPEDECLARE FIN_CON_COMENT|dim identificador  igual  TYPEDECLARE FIN_CON_COMENT|
                 dim  identificador igual LLAMAR_FUNCION FIN_CON_COMENT|dim  identificador as TYPE_ igual LLAMAR_FUNCION FIN_CON_COMENT|dim  identificador as TYPE_ igual OPERACION_ARITMETICA FIN_CON_COMENT|dim identificador igual OPERACION_ARITMETICA FIN_CON_COMENT|
                 identificador igual identificador FIN_CON_COMENT|identificador igual LLAMAR_FUNCION FIN_CON_COMENT|identificador igual OPERACION_ARITMETICA FIN_CON_COMENT|
-                identificador igual NUMERO|identificador igual BOOLEAN FIN_CON_COMENT|identificador igual texto_ FIN_CON_COMENT|identificador igual READLINE_FUNCION FIN_CON_COMENT|identificador punto identificador igual identificador FIN_CON_COMENT|
+                identificador igual NUMERO FIN_CON_COMENT|identificador igual BOOLEAN FIN_CON_COMENT|identificador igual texto_ FIN_CON_COMENT|identificador igual READLINE_FUNCION FIN_CON_COMENT|identificador punto identificador igual identificador FIN_CON_COMENT|
                 identificador punto identificador igual LLAMAR_FUNCION FIN_CON_COMENT|identificador punto identificador igual OPERACION_ARITMETICA FIN_CON_COMENT|identificador punto identificador igual READLINE_FUNCION FIN_CON_COMENT|
                 identificador punto identificador igual NUMERO FIN_CON_COMENT|identificador punto identificador igual BOOLEAN FIN_CON_COMENT|identificador punto identificador igual texto_ FIN_CON_COMENT| dim identificador igual identificador FIN_CON_COMENT|
                 dim identificador as TYPE_ igual identificador FIN_CON_COMENT|dim identificador igual LLAMAR_SUB|dim identificador as TYPE_ igual LLAMAR_SUB|identificador punto identificador igual LLAMAR_SUB | identificador igual LLAMAR_SUB;

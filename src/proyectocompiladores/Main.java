@@ -17,21 +17,21 @@ import java.nio.file.Paths;
  */
 public class Main {
     public static void main(String[] args) throws Exception {
-        String ruta_lexico = "C:/Users/willi/OneDrive/Documents/proyectoCompiladores/Proyecto_Compiladores_I/src/proyectocompiladores/Analizador_Lexico.flex";
+        /*String ruta_lexico = "C:/Users/willi/OneDrive/Documents/proyectoCompiladores/Proyecto_Compiladores_I/src/proyectocompiladores/Analizador_Lexico.flex";
         String ruta_sintactico = "C:/Users/willi/OneDrive/Documents/proyectoCompiladores/Proyecto_Compiladores_I/src/proyectocompiladores/Analizador_Sintactico.flex";
         String[] sintaxis = {"-parser", "Sintax", "C:/Users/willi/OneDrive/Documents/proyectoCompiladores/Proyecto_Compiladores_I/src/proyectocompiladores/Analizador_Sintactico.cup"};
         lexer(ruta_lexico, ruta_sintactico, sintaxis);
         
-        /*String ruta_lexico = "C:/Users/ItsJaan/Desktop/ProyectoCompiladores/src/proyectocompiladores/Analizador_Lexico.flex";
+        /*/String ruta_lexico = "C:/Users/ItsJaan/Desktop/ProyectoCompiladores/src/proyectocompiladores/Analizador_Lexico.flex";
         String ruta_sintactico = "C:/Users/ItsJaan/Desktop/ProyectoCompiladores/src/proyectocompiladores/Analizador_Sintactico.flex";
         String[] sintaxis = {"-parser", "Sintax", "C:/Users/ItsJaan/Desktop/ProyectoCompiladores/src/proyectocompiladores/Analizador_Sintactico.cup"};
-        lexer(ruta_lexico, ruta_sintactico, sintaxis);*/
+        lexer(ruta_lexico, ruta_sintactico, sintaxis);
         
         
     }
     
     public static void lexer(String ruta_lexico, String ruta_sintactico, String[] sintaxis) throws IOException, Exception{
-        File archivo;
+       /* File archivo;
         archivo = new File(ruta_lexico);
         JFlex.Main.generate(archivo);
         archivo = new File(ruta_sintactico);
@@ -54,7 +54,7 @@ public class Main {
                    Paths.get("C:/Users/willi/OneDrive/Documents/proyectoCompiladores/Proyecto_Compiladores_I/src/proyectocompiladores/Sintax.java")
         );
         
-       /* File archivo;
+       /*/ File archivo;
         archivo = new File(ruta_lexico);
         JFlex.Main.generate(archivo);
         archivo = new File(ruta_sintactico);
@@ -75,6 +75,6 @@ public class Main {
         }
         Files.move(Paths.get("C:/Users/ItsJaan/Desktop/ProyectoCompiladores/Sintax.java"),
                    Paths.get("C:/Users/ItsJaan/Desktop/ProyectoCompiladores/src/proyectocompiladores/Sintax.java")
-            );*/
+            );
     }
 }
