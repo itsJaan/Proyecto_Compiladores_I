@@ -47,7 +47,7 @@ public class Nodo {
     }
 
     public void print (String prefijo, boolean esHoja) {
-        System.out.println (prefijo + (esHoja ? " |___ " : " |──── ") + toString ());
+        System.out.println (prefijo + (esHoja ? " |_____ " : " |----- ") + toString ());
         for (int i = 0; i < hijos.size() - 1; i++) {
             hijos.get(i).print(prefijo + (esHoja ? "    " : " |   "), false);
         }

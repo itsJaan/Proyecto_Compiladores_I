@@ -15,6 +15,9 @@ parser code
     ArrayList<Nodo> hijosModule = new ArrayList<Nodo>();
     ArrayList<Nodo> hijosStructure = new ArrayList<Nodo>();
     ArrayList<Nodo> hijosFuncion = new ArrayList<Nodo>();
+    ArrayList<Nodo> hijosIfMain = new ArrayList<Nodo>();
+    
+
     public static Arbol arbol;
     public Nodo n_module;
     public String idea;
@@ -95,7 +98,7 @@ MODULE ::=  Public_  Module  identificador findelinea NEXT_MODULE PIE_MODULE
                                                                                                 {:
                                                                                                 parser.guardarNodoRaiz("public module()");
                                                                                                 for(Nodo n : parser.hijosModule){
-                                                                                                        parser.getRaiz().agregarHijo(n);
+                                                                                                parser.getRaiz().agregarHijo(n);
                                                                                                 }
                                                                                                 :}  
             |Public_  Module  error findelinea NEXT_MODULE PIE_MODULE
@@ -149,9 +152,11 @@ MAIN ::=   sub  main_ parentesisA parentesisC findelinea  INMAIN PIE_SUB        
 ;
 
 
-FIN_CON_COMENT ::= findelinea | comentario findelinea;
+FIN_CON_COMENT ::=  findelinea 
+                    |comentario findelinea;
 
-COMENTARIO_ILIMITADO ::= comentario findelinea| comentario findelinea COMENTARIO_ILIMITADO|comentario;
+COMENTARIO_ILIMITADO ::=    comentario findelinea
+                           |comentario findelinea COMENTARIO_ILIMITADO|comentario;
 
 INMAIN ::= ULTIMO 
            |comentario  findelinea INMAIN                                           {:
@@ -170,7 +175,7 @@ INMAIN ::= ULTIMO
                                                                                     parser.hijos.add(parser.getRaiz());
                                                                                     :}
 
-           |SENTENCIA_MAIN INMAIN
+           |SENTENCIA_MAIN INMAIN                                                   {:Collections.reverse(parser.hijos);:}
            |LLAMAR_FUNCION FIN_CON_COMENT INMAIN                                    {:
                                                                                     parser.guardarNodoRaiz("funcion");
                                                                                     parser.hijos.add(parser.getRaiz());
@@ -199,13 +204,18 @@ INMAIN ::= ULTIMO
            |exit error FIN_CON_COMENT INMAIN
            |error sub FIN_CON_COMENT INMAIN;
 
-ULTIMO ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT
+ULTIMO ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC 
+           FIN_CON_COMENT                                                       {: 
+                                                                                parser.guardarNodoRaiz("console.writeline()");
+                                                                                parser.hijos.add(parser.getRaiz());
+                                                                                :}
+ 
             |DECLARACION                                                        {: 
                                                                                 parser.guardarNodoRaiz("declaracion");
                                                                                 parser.hijos.add(parser.getRaiz());
                                                                                 :}
 
-            |SENTENCIA_MAIN
+            |SENTENCIA_MAIN                                                     
             |comentario findelinea                                              {: 
                                                                                 parser.guardarNodoRaiz("comentario");
                                                                                 parser.hijos.add(parser.getRaiz());
@@ -239,20 +249,37 @@ ULTIMO ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CO
             |error findelinea
             |error PIE_SUB;
        
-PIE_SUB ::= end_ sub FIN_CON_COMENT|end_ error FIN_CON_COMENT;
-LLAMAR_SUB ::= identificador PARAMETROS_SUB|identificador error findelinea;
+PIE_SUB ::=  end_ sub FIN_CON_COMENT
+            |end_ error FIN_CON_COMENT;
+LLAMAR_SUB ::=   identificador PARAMETROS_SUB
+                |identificador error findelinea;
 
-PARAMETROS_SUB ::= PARAMETROS_TYPE FIN_CON_COMENT |PARAMETROS_TYPE coma_ PARAMETROS_SUB|parentesisA PARAMETROS_TYPE parentesisC coma_ PARAMETROS_SUB|
-                   parentesisA PARAMETROS_TYPE parentesisC FIN_CON_COMENT;
+PARAMETROS_SUB ::=   PARAMETROS_TYPE FIN_CON_COMENT 
+                    |PARAMETROS_TYPE coma_ PARAMETROS_SUB
+                    |parentesisA PARAMETROS_TYPE parentesisC coma_ PARAMETROS_SUB
+                    |parentesisA PARAMETROS_TYPE parentesisC FIN_CON_COMENT;
 
-NUMERO ::= numero | resta numero;
+NUMERO ::=   numero 
+            |resta numero;
 
-INPARENTESIS::= texto_|NUMERO|BOOLEAN|identificador|identificador punto identificador|OPERACION_ARITMETICA|texto_ continuaciondelinea INPARENTESIS|
-                NUMERO continuaciondelinea INPARENTESIS|OPERACION_ARITMETICA continuaciondelinea INPARENTESIS|
-                BOOLEAN continuaciondelinea INPARENTESIS|identificador continuaciondelinea INPARENTESIS|identificador punto identificador continuaciondelinea INPARENTESIS;
+INPARENTESIS::=  texto_
+                |NUMERO
+                |BOOLEAN
+                |identificador
+                |identificador punto identificador
+                |OPERACION_ARITMETICA
+                |texto_ continuaciondelinea INPARENTESIS
+                |NUMERO continuaciondelinea INPARENTESIS
+                |OPERACION_ARITMETICA continuaciondelinea INPARENTESIS
+                |BOOLEAN continuaciondelinea INPARENTESIS
+                |identificador continuaciondelinea INPARENTESIS
+                |identificador punto identificador continuaciondelinea INPARENTESIS;
+                    
 
 
-OPERANDOS_TYPE ::= NUMERO|identificador|LLAMAR_FUNCION;
+OPERANDOS_TYPE ::=   NUMERO
+                    |identificador
+                    |LLAMAR_FUNCION;
 OPERACION_ARITMETICA ::= OPERANDOS_TYPE OPERADOR_ARITMETICO OPERACION_AR|
 
                          parentesisA OPERACION_ARITMETICA parentesisC|
@@ -301,17 +328,43 @@ OPERACION_ARITMETICA ::= OPERANDOS_TYPE OPERADOR_ARITMETICO OPERACION_AR|
                          
                          
 
-OPERADOR_ARITMETICO ::= suma|resta|mult|div|potencia|mod_; 
+OPERADOR_ARITMETICO ::=  suma
+                        |resta
+                        |mult
+                        |div
+                        |potencia
+                        |mod_; 
 
-OPERACION_AR ::= OPERANDOS_TYPE|OPERACION_ARITMETICA;
+OPERACION_AR ::=  OPERANDOS_TYPE
+                 |OPERACION_ARITMETICA;
 
-DECLARACION ::= dim  identificador  as  TYPE_ FIN_CON_COMENT|dim  identificador  as  TYPE_  igual  TYPEDECLARE FIN_CON_COMENT|dim identificador  igual  TYPEDECLARE FIN_CON_COMENT|
-                dim  identificador igual LLAMAR_FUNCION FIN_CON_COMENT|dim  identificador as TYPE_ igual LLAMAR_FUNCION FIN_CON_COMENT|dim  identificador as TYPE_ igual OPERACION_ARITMETICA FIN_CON_COMENT|dim identificador igual OPERACION_ARITMETICA FIN_CON_COMENT|
-                identificador igual identificador FIN_CON_COMENT|identificador igual LLAMAR_FUNCION FIN_CON_COMENT|identificador igual OPERACION_ARITMETICA FIN_CON_COMENT|
-                identificador igual NUMERO FIN_CON_COMENT|identificador igual BOOLEAN FIN_CON_COMENT|identificador igual texto_ FIN_CON_COMENT|identificador igual READLINE_FUNCION FIN_CON_COMENT|identificador punto identificador igual identificador FIN_CON_COMENT|
-                identificador punto identificador igual LLAMAR_FUNCION FIN_CON_COMENT|identificador punto identificador igual OPERACION_ARITMETICA FIN_CON_COMENT|identificador punto identificador igual READLINE_FUNCION FIN_CON_COMENT|
-                identificador punto identificador igual NUMERO FIN_CON_COMENT|identificador punto identificador igual BOOLEAN FIN_CON_COMENT|identificador punto identificador igual texto_ FIN_CON_COMENT| dim identificador igual identificador FIN_CON_COMENT|
-                dim identificador as TYPE_ igual identificador FIN_CON_COMENT|dim identificador igual LLAMAR_SUB|dim identificador as TYPE_ igual LLAMAR_SUB|identificador punto identificador igual LLAMAR_SUB | identificador igual LLAMAR_SUB;
+DECLARACION ::=  dim  identificador  as  TYPE_ FIN_CON_COMENT
+                |dim  identificador  as  TYPE_  igual  TYPEDECLARE FIN_CON_COMENT
+                |dim identificador  igual  TYPEDECLARE FIN_CON_COMENT
+                |dim  identificador igual LLAMAR_FUNCION FIN_CON_COMENT
+                |dim  identificador as TYPE_ igual LLAMAR_FUNCION FIN_CON_COMENT
+                |dim  identificador as TYPE_ igual OPERACION_ARITMETICA FIN_CON_COMENT
+                |dim identificador igual OPERACION_ARITMETICA FIN_CON_COMENT
+                |identificador igual identificador FIN_CON_COMENT
+                |identificador igual LLAMAR_FUNCION FIN_CON_COMENT
+                |identificador igual OPERACION_ARITMETICA FIN_CON_COMENT
+                |identificador igual NUMERO FIN_CON_COMENT
+                |identificador igual BOOLEAN FIN_CON_COMENT
+                |identificador igual texto_ FIN_CON_COMENT
+                |identificador igual READLINE_FUNCION FIN_CON_COMENT
+                |identificador punto identificador igual identificador FIN_CON_COMENT
+                |identificador punto identificador igual LLAMAR_FUNCION FIN_CON_COMENT
+                |identificador punto identificador igual OPERACION_ARITMETICA FIN_CON_COMENT
+                |identificador punto identificador igual READLINE_FUNCION FIN_CON_COMENT
+                |identificador punto identificador igual NUMERO FIN_CON_COMENT
+                |identificador punto identificador igual BOOLEAN FIN_CON_COMENT
+                |identificador punto identificador igual texto_ FIN_CON_COMENT
+                |dim identificador igual identificador FIN_CON_COMENT
+                |dim identificador as TYPE_ igual identificador FIN_CON_COMENT  
+                |dim identificador igual LLAMAR_SUB|dim identificador as TYPE_ igual LLAMAR_SUB
+                |identificador punto identificador igual LLAMAR_SUB 
+                |identificador igual LLAMAR_SUB;
+                
 
 TYPE_ ::= string_|boolean_|integer_|int_|identificador; 
 
@@ -321,49 +374,198 @@ TYPEDECLARE ::= texto_|NUMERO|BOOLEAN|READLINE_FUNCION;
 
 BOOLEAN ::= true_|false_;
 
-SENTENCIA_MAIN ::= IF_MAIN|FOR_MAIN|WHILE_MAIN;
+SENTENCIA_MAIN ::=   IF_MAIN                                                                          
+                    |FOR_MAIN                                                                                                        
+                    |WHILE_MAIN                                                 ;
+    
 
 WHILE_TYPE ::= until|while_;
 
 ELSEIF_TYPE ::= else_ if_| elseif_;
 
-IF_MAIN ::= if_ CONDICION then FIN_CON_COMENT INIF end_ if_ FIN_CON_COMENT|if_ CONDICION then FIN_CON_COMENT INIF else_ FIN_CON_COMENT INIF end_ if_ FIN_CON_COMENT |
-            if_ CONDICION then FIN_CON_COMENT INIF ELSE_IF_MAIN FIN_CON_COMENT INIF end_ if_ FIN_CON_COMENT|if_ CONDICION then FIN_CON_COMENT INIF ELSE_IF_MAIN2 end_ if_ FIN_CON_COMENT;
+IF_MAIN ::= if_ CONDICION then FIN_CON_COMENT INIF end_ if_ FIN_CON_COMENT                                              {:
+                                                                                                                        parser.guardarNodoRaiz("if condicion then");
+                                                                                                                        parser.hijos.add(parser.getRaiz());
+                                                                                                                        Collections.reverse(parser.hijos);
+                                                                                                                        :} 
+                                                                                                                                                                      
+            |if_ CONDICION then FIN_CON_COMENT INIF else_ FIN_CON_COMENT INIF end_ if_ FIN_CON_COMENT                   {:
+                                                                                                                        parser.guardarNodoRaiz("if condicion then");
+                                                                                                                        parser.hijos.add(parser.getRaiz());
+                                                                                                                        Collections.reverse(parser.hijos);
+                                                                                                                        parser.guardarNodoRaiz("else");
+                                                                                                                        parser.hijos.add(parser.getRaiz());
+                                                                                                                        :}
+            |if_ CONDICION then FIN_CON_COMENT INIF ELSE_IF_MAIN FIN_CON_COMENT INIF end_ if_ FIN_CON_COMENT            {:
+                                                                                                                        parser.guardarNodoRaiz("if condicion then");
+                                                                                                                        parser.hijos.add(parser.getRaiz());
+                                                                                                                        Collections.reverse(parser.hijos);
+                                                                                                                        :}
+            |if_ CONDICION then FIN_CON_COMENT INIF ELSE_IF_MAIN2 end_ if_ FIN_CON_COMENT                               {:
+                                                                                                                        parser.guardarNodoRaiz("if condicion then");
+                                                                                                                        parser.hijos.add(parser.getRaiz());
+                                                                                                                        Collections.reverse(parser.hijos);
+                                                                                                                        :};
 
-INIF ::=   console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT|DECLARACION|SENTENCIA_MAIN|comentario findelinea | comentario  findelinea INIF|
-           LLAMAR_FUNCION FIN_CON_COMENT|console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INIF|DECLARACION INIF|
-           SENTENCIA_MAIN findelinea INIF|LLAMAR_FUNCION FIN_CON_COMENT INIF|LLAMAR_SUB |LLAMAR_SUB  INIF|exit sub FIN_CON_COMENT INIF|exit sub FIN_CON_COMENT|
-           console_ punto writeline parentesisA parentesisC FIN_CON_COMENT|console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INIF|
-           console_ punto readline parentesisA parentesisC FIN_CON_COMENT|console_ punto readline parentesisA parentesisC FIN_CON_COMENT INIF;
+INIF ::=    console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT                               {:
+                                                                                                                        parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                        parser.hijosIfMain.add(parser.getRaiz());
+                                                                                                                        :}
+ 
+            |DECLARACION                                                                                                {:
+                                                                                                                        parser.guardarNodoRaiz("declaracion");
+                                                                                                                        parser.hijosIfMain.add(parser.getRaiz());
+                                                                                                                        :}
+            
+            |SENTENCIA_MAIN                                                                                             
 
-ELSE_IF_MAIN ::= ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF  ELSE_IF_MAIN|ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF else_ ;
-ELSE_IF_MAIN2::= ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF  ELSE_IF_MAIN2|ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF;
+            |comentario findelinea                                                                                      {:
+                                                                                                                        parser.guardarNodoRaiz("comentario");
+                                                                                                                        parser.hijosIfMain.add(parser.getRaiz());
+                                                                                                                        :}
 
-CONDICION ::= identificador OPERADORRELACIONAL identificador|identificador OPERADORRELACIONAL NUMERO|
-              identificador OPERADORRELACIONAL BOOLEAN|identificador OPERADORRELACIONAL OPERACION_ARITMETICA|
-              OPERACION_ARITMETICA OPERADORRELACIONAL NUMERO|OPERACION_ARITMETICA OPERADORRELACIONAL OPERACION_ARITMETICA|
-              OPERACION_ARITMETICA OPERADORRELACIONAL identificador|OPERACION_ARITMETICA OPERADORRELACIONAL BOOLEAN|
-              BOOLEAN OPERADORRELACIONAL BOOLEAN|BOOLEAN OPERADORRELACIONAL NUMERO|BOOLEAN OPERADORRELACIONAL identificador|
-              BOOLEAN OPERADORRELACIONAL OPERACION_ARITMETICA|NUMERO OPERADORRELACIONAL NUMERO|
-              NUMERO OPERADORRELACIONAL identificador|NUMERO OPERADORRELACIONAL OPERACION_ARITMETICA|
-              NUMERO OPERADORRELACIONAL BOOLEAN|BOOLEAN OPERADORRELACIONAL LLAMAR_FUNCION|
-              identificador OPERADORRELACIONAL LLAMAR_FUNCION|NUMERO OPERADORRELACIONAL LLAMAR_FUNCION|
-              OPERACION_ARITMETICA OPERADORRELACIONAL LLAMAR_FUNCION|LLAMAR_FUNCION OPERADORRELACIONAL BOOLEAN|
-              LLAMAR_FUNCION OPERADORRELACIONAL identificador|LLAMAR_FUNCION OPERADORRELACIONAL NUMERO|
-              LLAMAR_FUNCION OPERADORRELACIONAL OPERACION_ARITMETICA;
+            | comentario  findelinea INIF                                                                               {:
+                                                                                                                        parser.guardarNodoRaiz("comentario");
+                                                                                                                        parser.hijosIfMain.add(parser.getRaiz());
+                                                                                                                        :}
+
+            |LLAMAR_FUNCION FIN_CON_COMENT                                                                              {:
+                                                                                                                        parser.guardarNodoRaiz("funcion()");
+                                                                                                                        parser.hijosIfMain.add(parser.getRaiz());
+                                                                                                                        :}
+
+            |console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INIF                         {:
+                                                                                                                        parser.guardarNodoRaiz("console.writeline()");
+                                                                                                                        parser.hijosIfMain.add(parser.getRaiz());
+                                                                                                                        :}
+
+            |DECLARACION INIF                                                                                           {:
+                                                                                                                        parser.guardarNodoRaiz("declaracion");
+                                                                                                                        parser.hijosIfMain.add(parser.getRaiz());
+                                                                                                                        :}
+
+            |SENTENCIA_MAIN findelinea INIF
+
+            |LLAMAR_FUNCION FIN_CON_COMENT INIF                                                                         {:
+                                                                                                                        parser.guardarNodoRaiz("funcion()");
+                                                                                                                        parser.hijosIfMain.add(parser.getRaiz());
+                                                                                                                        :}
+
+            |LLAMAR_SUB                                                                                                 {:
+                                                                                                                        parser.guardarNodoRaiz("subproceso()");
+                                                                                                                        parser.hijosIfMain.add(parser.getRaiz());
+                                                                                                                        :}
+
+            |LLAMAR_SUB  INIF                                                                                           {:
+                                                                                                                        parser.guardarNodoRaiz("subproceso()");
+                                                                                                                        parser.hijosIfMain.add(parser.getRaiz());
+                                                                                                                        :}
+
+            |exit sub FIN_CON_COMENT INIF                                                                               {:
+                                                                                                                        parser.guardarNodoRaiz("exit sub");
+                                                                                                                        parser.hijosIfMain.add(parser.getRaiz());
+                                                                                                                        :}
+
+            |exit sub FIN_CON_COMENT                                                                                    {:
+                                                                                                                        parser.guardarNodoRaiz("exit sub");
+                                                                                                                        parser.hijosIfMain.add(parser.getRaiz());
+                                                                                                                        :}
+
+            |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT                                            {:
+                                                                                                                        parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                        parser.hijosIfMain.add(parser.getRaiz());
+                                                                                                                        :}
+
+            |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INIF                                       {:
+                                                                                                                        parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                        parser.hijosIfMain.add(parser.getRaiz());
+                                                                                                                        :}
+
+            |console_ punto readline parentesisA parentesisC FIN_CON_COMENT                                             {:
+                                                                                                                        parser.guardarNodoRaiz("console.readLine()");
+                                                                                                                        parser.hijosIfMain.add(parser.getRaiz());
+                                                                                                                        :}
+
+            |console_ punto readline parentesisA parentesisC FIN_CON_COMENT INIF                                        {:
+                                                                                                                        parser.guardarNodoRaiz("console.readLine()");
+                                                                                                                        parser.hijosIfMain.add(parser.getRaiz());
+                                                                                                                        :};
+
+
+ELSE_IF_MAIN ::= ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF  ELSE_IF_MAIN   {: 
+                                                                                parser.guardarNodoRaiz("elseif condicion then");
+                                                                                parser.hijos.add(parser.getRaiz());
+                                                                                :}
+                 |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF else_          {: 
+                                                                                parser.guardarNodoRaiz("else");
+                                                                                parser.hijos.add(parser.getRaiz());
+                                                                                parser.guardarNodoRaiz("elseif condicion then");
+                                                                                parser.hijos.add(parser.getRaiz());
+                                                                                :};
+ELSE_IF_MAIN2::= ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF  ELSE_IF_MAIN2  {: 
+                                                                                parser.guardarNodoRaiz("elseif condicion then");
+                                                                                parser.hijos.add(parser.getRaiz());
+                                                                                :}
+                 |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF                {: 
+                                                                                parser.guardarNodoRaiz("elseif condicion then");
+                                                                                parser.hijos.add(parser.getRaiz());
+                                                                                :};
+
+CONDICION ::=    identificador OPERADORRELACIONAL identificador
+                |identificador OPERADORRELACIONAL NUMERO
+                |identificador OPERADORRELACIONAL BOOLEAN
+                |identificador OPERADORRELACIONAL OPERACION_ARITMETICA
+                |OPERACION_ARITMETICA OPERADORRELACIONAL NUMERO
+                |OPERACION_ARITMETICA OPERADORRELACIONAL OPERACION_ARITMETICA
+                |OPERACION_ARITMETICA OPERADORRELACIONAL identificador
+                |OPERACION_ARITMETICA OPERADORRELACIONAL BOOLEAN
+                |BOOLEAN OPERADORRELACIONAL BOOLEAN
+                |BOOLEAN OPERADORRELACIONAL NUMERO
+                |BOOLEAN OPERADORRELACIONAL identificador
+                |BOOLEAN OPERADORRELACIONAL OPERACION_ARITMETICA
+                |NUMERO OPERADORRELACIONAL NUMERO
+                |NUMERO OPERADORRELACIONAL identificador
+                |NUMERO OPERADORRELACIONAL OPERACION_ARITMETICA
+                |NUMERO OPERADORRELACIONAL BOOLEAN
+                |BOOLEAN OPERADORRELACIONAL LLAMAR_FUNCION
+                |identificador OPERADORRELACIONAL LLAMAR_FUNCION
+                |NUMERO OPERADORRELACIONAL LLAMAR_FUNCION
+                |OPERACION_ARITMETICA OPERADORRELACIONAL LLAMAR_FUNCION
+                |LLAMAR_FUNCION OPERADORRELACIONAL BOOLEAN
+                |LLAMAR_FUNCION OPERADORRELACIONAL identificador
+                |LLAMAR_FUNCION OPERADORRELACIONAL NUMERO
+                |LLAMAR_FUNCION OPERADORRELACIONAL OPERACION_ARITMETICA;
 
 OPERADORRELACIONAL ::= mayor igual|menor igual|igual|mayor|menor;
 
-FOR_MAIN ::= for_ identificador igual NUMERO to NUMERO step_ NUMERO FIN_CON_COMENT INFOR_MAIN next identificador FIN_CON_COMENT;
+FOR_MAIN ::= for_ identificador igual NUMERO to NUMERO step_ NUMERO FIN_CON_COMENT INFOR_MAIN next identificador FIN_CON_COMENT             {: 
+                                                                                                                                            parser.guardarNodoRaiz("for identificador igual numero to numero step numero");
+                                                                                                                                            parser.hijos.add(parser.getRaiz());
+                                                                                                                                            :};
 
-INFOR_MAIN::= console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT|DECLARACION|
-              SENTENCIA_FOR|console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INFOR_MAIN|DECLARACION INFOR_MAIN|comentario findelinea | comentario  findelinea INFOR_MAIN|
-              SENTENCIA_FOR INFOR_MAIN|LLAMAR_FUNCION FIN_CON_COMENT|LLAMAR_FUNCION FIN_CON_COMENT INFOR_MAIN |LLAMAR_SUB |LLAMAR_SUB  INFOR_MAIN|exit for_ FIN_CON_COMENT INFOR_MAIN|exit for_ FIN_CON_COMENT|
-              console_ punto writeline parentesisA parentesisC FIN_CON_COMENT|console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INFOR_MAIN|
-              console_ punto readline parentesisA parentesisC FIN_CON_COMENT|console_ punto readline parentesisA parentesisC FIN_CON_COMENT INFOR_MAIN;
+INFOR_MAIN::=    console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT
+                |DECLARACION
+                |SENTENCIA_FOR
+                |console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INFOR_MAIN
+                |DECLARACION INFOR_MAIN
+                |comentario findelinea 
+                | comentario  findelinea INFOR_MAIN
+                |SENTENCIA_FOR INFOR_MAIN|LLAMAR_FUNCION FIN_CON_COMENT
+                |LLAMAR_FUNCION FIN_CON_COMENT INFOR_MAIN
+                |LLAMAR_SUB 
+                |LLAMAR_SUB  INFOR_MAIN
+                |exit for_ FIN_CON_COMENT INFOR_MAIN
+                |exit for_ FIN_CON_COMENT
+                |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT
+                |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INFOR_MAIN
+                |console_ punto readline parentesisA parentesisC FIN_CON_COMENT
+                |console_ punto readline parentesisA parentesisC FIN_CON_COMENT INFOR_MAIN;
 
 
-SENTENCIA_FOR::= IF_FOR|FOR_MAIN|WHILE_FOR; 
+SENTENCIA_FOR::=    IF_FOR                                                      
+                    |FOR_MAIN                                                   
+                    |WHILE_FOR; 
+    
 
 INIF_FOR ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT|DECLARACION|
              SENTENCIA_FOR|console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INIF_FOR|DECLARACION INIF_FOR|comentario findelinea | comentario  findelinea INIF_FOR|
@@ -386,7 +588,10 @@ INWHILE_FOR ::=  console_ punto writeline parentesisA  INPARENTESIS parentesisC 
                  console_ punto writeline parentesisA parentesisC FIN_CON_COMENT|console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INWHILE_FOR|
                  console_ punto readline parentesisA parentesisC FIN_CON_COMENT|console_ punto readline parentesisA parentesisC FIN_CON_COMENT INWHILE_FOR;
 
-WHILE_MAIN::= do_ WHILE_TYPE CONDICION FIN_CON_COMENT INWHILE_MAIN loop FIN_CON_COMENT;
+WHILE_MAIN::= do_ WHILE_TYPE CONDICION FIN_CON_COMENT INWHILE_MAIN loop FIN_CON_COMENT                      {: 
+                                                                                                            parser.guardarNodoRaiz("do while condicion");
+                                                                                                            parser.hijos.add(parser.getRaiz());
+                                                                                                            :};
 
 INWHILE_MAIN ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT|DECLARACION|SENTENCIA_WHILE|comentario findelinea | comentario  findelinea INWHILE_MAIN|
                  console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INWHILE_MAIN|DECLARACION INWHILE_MAIN|
@@ -480,9 +685,15 @@ FUNCION_ ::= private_ function_ identificador parentesisA PARAMETRO parentesisC 
 
 ;
 
-PIE_FUNCION ::= end_ function_|error function_|end_ error;
+PIE_FUNCION ::=  end_ function_
+                |error function_
+                |end_ error;
+    
 
-PARAMETRO ::= identificador as TYPE_|identificador as TYPE_ coma_ PARAMETRO|byval identificador as TYPE_ coma_ PARAMETRO|byval identificador as TYPE_;
+PARAMETRO ::=  identificador as TYPE_
+              |identificador as TYPE_ coma_ PARAMETRO
+              |byval identificador as TYPE_ coma_ PARAMETRO
+              |byval identificador as TYPE_;
 
 INFUNCION ::=  console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT                        {: 
                                                                                                                     parser.guardarNodoRaiz("console.writeline()");
@@ -571,42 +782,127 @@ INFUNCION ::=  console_ punto writeline parentesisA  INPARENTESIS parentesisC FI
 
 
 
-SENTENCIA_FUNCION ::= IF_FUNCION|FOR_FUNCION|WHILE_FUNCION;
+SENTENCIA_FUNCION ::=    IF_FUNCION
+                        |FOR_FUNCION
+                        |WHILE_FUNCION;
+    
+IF_FUNCION ::=  if_ CONDICION then FIN_CON_COMENT INIF_FUNCION  end_ if_ FIN_CON_COMENT                                                    {:
+                                                                                                                                            parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                            parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                                            Collections.reverse(parser.hijosFuncion);
+                                                                                                                                            :} 
+                            
+                |if_ CONDICION then FIN_CON_COMENT INIF_FUNCION  else_ FIN_CON_COMENT INIF_FUNCION  end_ if_ FIN_CON_COMENT                 {:
+                                                                                                                                            parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                            parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                                            Collections.reverse(parser.hijosFuncion);
+                                                                                                                                            parser.guardarNodoRaiz("else");
+                                                                                                                                            parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
 
-IF_FUNCION ::=if_ CONDICION then FIN_CON_COMENT INIF_FUNCION  end_ if_ FIN_CON_COMENT|
-              if_ CONDICION then FIN_CON_COMENT INIF_FUNCION  else_ FIN_CON_COMENT INIF_FUNCION  end_ if_ FIN_CON_COMENT|
-              if_ CONDICION then FIN_CON_COMENT INIF_FUNCION ELSE_IF_FUNCION FIN_CON_COMENT INIF_FUNCION end_ if_ FIN_CON_COMENT|
-              if_ CONDICION then FIN_CON_COMENT INIF_FUNCION ELSE_IF_FUNCION2 end_ if_ FIN_CON_COMENT;
+                |if_ CONDICION then FIN_CON_COMENT INIF_FUNCION ELSE_IF_FUNCION FIN_CON_COMENT INIF_FUNCION end_ if_ FIN_CON_COMENT         {:
+                                                                                                                                            parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                            parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                                            
+                                                                                                                                            :}
+                |if_ CONDICION then FIN_CON_COMENT INIF_FUNCION ELSE_IF_FUNCION2 end_ if_ FIN_CON_COMENT                                    {:
+                                                                                                                                            parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                            parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                                            Collections.reverse(parser.hijosFuncion);
+                                                                                                                                            :};   
 
-INIF_FUNCION ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT|DECLARACION|comentario findelinea | comentario  findelinea INIF_FUNCION|
-                 SENTENCIA_FUNCION|console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INIF_FUNCION|DECLARACION INIF_FUNCION|
-                 SENTENCIA_FUNCION INIF_FUNCION|LLAMAR_FUNCION FIN_CON_COMENT|LLAMAR_FUNCION FIN_CON_COMENT INIF_FUNCION |LLAMAR_SUB |LLAMAR_SUB  INIF_FUNCION |exit function_ FIN_CON_COMENT INIF_FUNCION |exit function_ FIN_CON_COMENT|
-                 console_ punto writeline parentesisA parentesisC FIN_CON_COMENT|console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INIF_FUNCION|
-                 console_ punto readline parentesisA parentesisC FIN_CON_COMENT|console_ punto readline parentesisA parentesisC FIN_CON_COMENT INIF_FUNCION;
+INIF_FUNCION ::=    console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT
+                    |DECLARACION
+                    |comentario findelinea 
+                    | comentario  findelinea INIF_FUNCION
+                    |SENTENCIA_FUNCION
+                    |console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INIF_FUNCION
+                    |DECLARACION INIF_FUNCION
+                    |SENTENCIA_FUNCION INIF_FUNCION
+                    |LLAMAR_FUNCION FIN_CON_COMENT
+                    |LLAMAR_FUNCION FIN_CON_COMENT INIF_FUNCION 
+                    |LLAMAR_SUB 
+                    |LLAMAR_SUB  INIF_FUNCION 
+                    |exit function_ FIN_CON_COMENT INIF_FUNCION 
+                    |exit function_ FIN_CON_COMENT
+                    |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT
+                    |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INIF_FUNCION
+                    |console_ punto readline parentesisA parentesisC FIN_CON_COMENT
+                    |console_ punto readline parentesisA parentesisC FIN_CON_COMENT INIF_FUNCION;
 
-ELSE_IF_FUNCION ::= ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FUNCION else_|ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FUNCION ELSE_IF_FUNCION;
-ELSE_IF_FUNCION2::= ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FUNCION |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FUNCION ELSE_IF_FUNCION2;
+ELSE_IF_FUNCION ::= ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FUNCION else_                {: 
+                                                                                                parser.guardarNodoRaiz("elseif condicion then");
+                                                                                                parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                :}
+                    |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FUNCION ELSE_IF_FUNCION     {: 
+                                                                                                parser.guardarNodoRaiz("else");
+                                                                                                parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                parser.guardarNodoRaiz("elseif condicion then");
+                                                                                                parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                :};
+    
+ELSE_IF_FUNCION2::= ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FUNCION                      {: 
+                                                                                                parser.guardarNodoRaiz("elseif condicion then");
+                                                                                                parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                :}
+                    |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FUNCION ELSE_IF_FUNCION2    {: 
+                                                                                                parser.guardarNodoRaiz("elseif condicion then");
+                                                                                                parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                :};
 
-FOR_FUNCION ::= for_ identificador igual NUMERO to NUMERO step_ NUMERO FIN_CON_COMENT INFOR_FUNCION next identificador FIN_CON_COMENT;
+FOR_FUNCION ::= for_ identificador igual NUMERO to NUMERO step_ NUMERO FIN_CON_COMENT INFOR_FUNCION next identificador FIN_CON_COMENT       {: 
+                                                                                                                                            parser.guardarNodoRaiz("for identificador igual numero to numero step numero");
+                                                                                                                                            parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                                            :};
 
-INFOR_FUNCION ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT|DECLARACION|comentario findelinea | comentario  findelinea INFOR_FUNCION|
-                  SENTENCIA_FOR_FUNCION|console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INFOR_FUNCION|DECLARACION INFOR_FUNCION|
-                  SENTENCIA_FOR_FUNCION INFOR_FUNCION|LLAMAR_FUNCION FIN_CON_COMENT|LLAMAR_FUNCION FIN_CON_COMENT INFOR_FUNCION |LLAMAR_SUB |LLAMAR_SUB  INFOR_FUNCION|exit function_ FIN_CON_COMENT INFOR_FUNCION |exit function_ FIN_CON_COMENT|exit for_ FIN_CON_COMENT INFOR_FUNCION|exit for_ FIN_CON_COMENT|
-                  console_ punto writeline parentesisA parentesisC FIN_CON_COMENT|console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INFOR_FUNCION|
-                  console_ punto readline parentesisA parentesisC FIN_CON_COMENT|console_ punto readline parentesisA parentesisC FIN_CON_COMENT INFOR_FUNCION;
+INFOR_FUNCION ::=    console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT
+                    |DECLARACION
+                    |comentario findelinea 
+                    | comentario  findelinea INFOR_FUNCION
+                    |SENTENCIA_FOR_FUNCION
+                    |console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INFOR_FUNCION
+                    |DECLARACION INFOR_FUNCION
+                    |SENTENCIA_FOR_FUNCION INFOR_FUNCION
+                    |LLAMAR_FUNCION FIN_CON_COMENT
+                    |LLAMAR_FUNCION FIN_CON_COMENT INFOR_FUNCION 
+                    |LLAMAR_SUB 
+                    |LLAMAR_SUB  INFOR_FUNCION
+                    |exit function_ FIN_CON_COMENT INFOR_FUNCION 
+                    |exit function_ FIN_CON_COMENT
+                    |exit for_ FIN_CON_COMENT INFOR_FUNCION
+                    |exit for_ FIN_CON_COMENT
+                    |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT
+                    |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INFOR_FUNCION
+                    |console_ punto readline parentesisA parentesisC FIN_CON_COMENT
+                    |console_ punto readline parentesisA parentesisC FIN_CON_COMENT INFOR_FUNCION;
 
 SENTENCIA_FOR_FUNCION ::= IF_FOR_FUNCION |FOR_FUNCION|WHILE_FOR_FUNCION;
 
-IF_FOR_FUNCION ::= if_ CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION  end_ if_ FIN_CON_COMENT|
-                   if_ CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION  else_ FIN_CON_COMENT INIF_FOR_FUNCION  end_ if_ FIN_CON_COMENT|
-                   if_ CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION ELSE_IF_FOR_FUNCION FIN_CON_COMENT INIF_FOR_FUNCION end_ if_ FIN_CON_COMENT|
-                   if_ CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION ELSE_IF_FOR_FUNCION2 end_ if_ FIN_CON_COMENT;
+IF_FOR_FUNCION ::=  if_ CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION  end_ if_ FIN_CON_COMENT
+                   |if_ CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION  else_ FIN_CON_COMENT INIF_FOR_FUNCION  end_ if_ FIN_CON_COMENT
+                   |if_ CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION ELSE_IF_FOR_FUNCION FIN_CON_COMENT INIF_FOR_FUNCION end_ if_ FIN_CON_COMENT
+                   |if_ CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION ELSE_IF_FOR_FUNCION2 end_ if_ FIN_CON_COMENT;
 
-INIF_FOR_FUNCION ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT|DECLARACION|comentario findelinea | comentario  findelinea INIF_FOR_FUNCION|
-                 SENTENCIA_FOR_FUNCION|console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INIF_FOR_FUNCION|DECLARACION INIF_FOR_FUNCION|
-                 SENTENCIA_FOR_FUNCION INIF_FOR_FUNCION|LLAMAR_FUNCION FIN_CON_COMENT|LLAMAR_FUNCION FIN_CON_COMENT INIF_FUNCION |LLAMAR_SUB |LLAMAR_SUB  INIF_FOR_FUNCION|exit function_ FIN_CON_COMENT INIF_FOR_FUNCION| exit function_ FIN_CON_COMENT|exit for_ FIN_CON_COMENT INIF_FOR_FUNCION|exit for_ FIN_CON_COMENT|
-                 console_ punto writeline parentesisA parentesisC FIN_CON_COMENT|console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INIF_FOR_FUNCION|
-                 console_ punto readline parentesisA parentesisC FIN_CON_COMENT|console_ punto readline parentesisA parentesisC FIN_CON_COMENT INIF_FOR_FUNCION; 
+INIF_FOR_FUNCION ::=     console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT
+                        |DECLARACION
+                        |comentario findelinea 
+                        | comentario  findelinea INIF_FOR_FUNCION
+                        |SENTENCIA_FOR_FUNCION
+                        |console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INIF_FOR_FUNCION
+                        |DECLARACION INIF_FOR_FUNCION
+                        |SENTENCIA_FOR_FUNCION INIF_FOR_FUNCION
+                        |LLAMAR_FUNCION FIN_CON_COMENT
+                        |LLAMAR_FUNCION FIN_CON_COMENT INIF_FUNCION 
+                        |LLAMAR_SUB 
+                        |LLAMAR_SUB  INIF_FOR_FUNCION
+                        |exit function_ FIN_CON_COMENT INIF_FOR_FUNCION
+                        |exit function_ FIN_CON_COMENT
+                        |exit for_ FIN_CON_COMENT INIF_FOR_FUNCION
+                        |exit for_ FIN_CON_COMENT
+                        |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT
+                        |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INIF_FOR_FUNCION
+                        |console_ punto readline parentesisA parentesisC FIN_CON_COMENT
+                        |console_ punto readline parentesisA parentesisC FIN_CON_COMENT INIF_FOR_FUNCION; 
 
 ELSE_IF_FOR_FUNCION ::= ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION else_|ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION ELSE_IF_FOR_FUNCION;
 ELSE_IF_FOR_FUNCION2::= ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION ELSE_IF_FOR_FUNCION2;
@@ -619,7 +915,10 @@ INWHILE_FOR_FUNCION ::= console_ punto writeline parentesisA  INPARENTESIS paren
                  console_ punto writeline parentesisA parentesisC FIN_CON_COMENT|console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INWHILE_FOR_FUNCION|
                  console_ punto readline parentesisA parentesisC FIN_CON_COMENT|console_ punto readline parentesisA parentesisC FIN_CON_COMENT INWHILE_FOR_FUNCION;
 
-WHILE_FUNCION::= do_ WHILE_TYPE CONDICION FIN_CON_COMENT INWHILE_FUNCION loop FIN_CON_COMENT;
+WHILE_FUNCION::= do_ WHILE_TYPE CONDICION FIN_CON_COMENT INWHILE_FUNCION loop FIN_CON_COMENT                                                {: 
+                                                                                                                                            parser.guardarNodoRaiz("do while condicion");
+                                                                                                                                            parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                                            :};
 
 INWHILE_FUNCION ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT|DECLARACION|comentario findelinea | comentario  findelinea INWHILE_FUNCION|
                  SENTENCIA_FOR_FUNCION|console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INWHILE_FUNCION|DECLARACION INWHILE_FUNCION|
@@ -648,7 +947,7 @@ ELSE_IF_WHILE_FUNCION2::= ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_WHILE_F
 FOR_WHILE_FUNCION ::= for_ identificador igual NUMERO to NUMERO step_ NUMERO FIN_CON_COMENT INFOR_WHILE_FUNCION next identificador FIN_CON_COMENT;
 
 INFOR_WHILE_FUNCION ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT|DECLARACION|SENTENCIA_WHILE|comentario findelinea | comentario  findelinea INFOR_WHILE_FUNCION|
-                 console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INFOR_WHILE_FUNCION|DECLARACION INFOR_WHILE_FUNCION|
-                 SENTENCIA_WHILE INFOR_WHILE_FUNCION|LLAMAR_FUNCION FIN_CON_COMENT|LLAMAR_FUNCION FIN_CON_COMENT INFOR_WHILE_FUNCION|LLAMAR_SUB |LLAMAR_SUB  INFOR_WHILE_FUNCION|exit do_ FIN_CON_COMENT INFOR_WHILE_FUNCION|exit for_ FIN_CON_COMENT INFOR_WHILE_FUNCION| exit function_ FIN_CON_COMENT INFOR_WHILE_FUNCION|exit do_ FIN_CON_COMENT |exit for_ FIN_CON_COMENT | exit function_ FIN_CON_COMENT|
-                 console_ punto writeline parentesisA parentesisC FIN_CON_COMENT|console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INFOR_WHILE_FUNCION|
-                 console_ punto readline parentesisA parentesisC FIN_CON_COMENT|console_ punto readline parentesisA parentesisC FIN_CON_COMENT INFOR_WHILE_FUNCION;
+                        console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INFOR_WHILE_FUNCION|DECLARACION INFOR_WHILE_FUNCION|
+                        SENTENCIA_WHILE INFOR_WHILE_FUNCION|LLAMAR_FUNCION FIN_CON_COMENT|LLAMAR_FUNCION FIN_CON_COMENT INFOR_WHILE_FUNCION|LLAMAR_SUB |LLAMAR_SUB  INFOR_WHILE_FUNCION|exit do_ FIN_CON_COMENT INFOR_WHILE_FUNCION|exit for_ FIN_CON_COMENT INFOR_WHILE_FUNCION| exit function_ FIN_CON_COMENT INFOR_WHILE_FUNCION|exit do_ FIN_CON_COMENT |exit for_ FIN_CON_COMENT | exit function_ FIN_CON_COMENT|
+                        console_ punto writeline parentesisA parentesisC FIN_CON_COMENT|console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INFOR_WHILE_FUNCION|
+                        console_ punto readline parentesisA parentesisC FIN_CON_COMENT|console_ punto readline parentesisA parentesisC FIN_CON_COMENT INFOR_WHILE_FUNCION;
