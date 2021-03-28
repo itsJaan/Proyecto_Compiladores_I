@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java_cup.runtime.Symbol;
 import ArbolAST.Arbol;
 import ArbolAST.Nodo;
-
+import java.util.Collections;
 
 parser code
 {:
@@ -11,8 +11,13 @@ parser code
     public String token;
     public Symbol irrecuperable;
     ArrayList<String> lista = new ArrayList<String>();
+    ArrayList<Nodo> hijos = new ArrayList<Nodo>();
+    ArrayList<Nodo> hijosModule = new ArrayList<Nodo>();
+    ArrayList<Nodo> hijosStructure = new ArrayList<Nodo>();
+    ArrayList<Nodo> hijosFuncion = new ArrayList<Nodo>();
     public static Arbol arbol;
     public Nodo n_module;
+    public String idea;
  
     
     
@@ -37,7 +42,17 @@ parser code
     public String getUnrecovery(){
         return token;
     }
+
+    public void guardarNodoRaiz(String nodo){
+        n_module = new Nodo(nodo);
+        arbol= new Arbol(n_module);
+    }
+
+    public Nodo getRaiz(){
+        return n_module;
+    }
 :};
+
 
 terminal imports, if_, Public_, Module, sub,for_,dim,end_,integer_,boolean_,string_, 
          System_,console_,writeline,as,do_,while_,struct_,then,else_,function_,
@@ -76,23 +91,41 @@ start with UC;
 UC ::= MODULE|IMPORTS MODULE COMENTARIO_ILIMITADO|comentario findelinea UC|comentario findelinea;
 
 
-MODULE ::=  Public_  Module  identificador findelinea NEXT_MODULE PIE_MODULE {: parser.n_module = new Nodo("modulo");
-                                                                                parser.arbol= new Arbol(parser.n_module);
-                                                                              :}
-            |Public_  Module  error findelinea NEXT_MODULE PIE_MODULE|
-            Public_  error  identificador findelinea NEXT_MODULE PIE_MODULE|
-            error  Module  identificador findelinea NEXT_MODULE PIE_MODULE|
-            Public_  Module  identificador  comentario findelinea NEXT_MODULE PIE_MODULE|
-            Public_  Module  identificador  error findelinea NEXT_MODULE PIE_MODULE|
-            Public_  Module  error  comentario findelinea NEXT_MODULE PIE_MODULE|
-            Public_  error  identificador  comentario findelinea NEXT_MODULE PIE_MODULE|
-            error  Module  identificador  comentario findelinea NEXT_MODULE PIE_MODULE;
+MODULE ::=  Public_  Module  identificador findelinea NEXT_MODULE PIE_MODULE                    
+                                                                                                {:
+                                                                                                parser.guardarNodoRaiz("public module()");
+                                                                                                for(Nodo n : parser.hijosModule){
+                                                                                                        parser.getRaiz().agregarHijo(n);
+                                                                                                }
+                                                                                                :}  
+            |Public_  Module  error findelinea NEXT_MODULE PIE_MODULE
+            |Public_  error  identificador findelinea NEXT_MODULE PIE_MODULE
+            |error  Module  identificador findelinea NEXT_MODULE PIE_MODULE
+            |Public_  Module  identificador  comentario findelinea NEXT_MODULE PIE_MODULE
+            |Public_  Module  identificador  error findelinea NEXT_MODULE PIE_MODULE
+            |Public_  Module  error  comentario findelinea NEXT_MODULE PIE_MODULE
+            |Public_  error  identificador  comentario findelinea NEXT_MODULE PIE_MODULE
+            |error  Module  identificador  comentario findelinea NEXT_MODULE PIE_MODULE;
 PIE_MODULE ::= end_ Module|end_ error;
-NEXT_MODULE ::= MAIN                                                            
-                |STRUCT_ MAIN|FUNCION_  MAIN |STRUCT_ FIN_CON_COMENT NEXT_MODULE|FUNCION_ FIN_CON_COMENT NEXT_MODULE |MAIN findelinea NEXT_MODULE| comentario findelinea NEXT_MODULE;
+NEXT_MODULE ::= MAIN                                                                    
+                                                           
+                |STRUCT_ MAIN                                                           
 
-MAIN ::=   sub  main_ parentesisA parentesisC findelinea  INMAIN PIE_SUB|
-           error  main_ parentesisA parentesisC findelinea  INMAIN PIE_SUB|
+                |FUNCION_  MAIN 
+                |STRUCT_ FIN_CON_COMENT NEXT_MODULE
+                |FUNCION_ FIN_CON_COMENT NEXT_MODULE
+                |MAIN findelinea NEXT_MODULE
+                |comentario findelinea NEXT_MODULE;
+
+MAIN ::=   sub  main_ parentesisA parentesisC findelinea  INMAIN PIE_SUB                {:
+                                                                                        parser.guardarNodoRaiz("sub main()");
+                                                                                        Collections.reverse(parser.hijos);
+                                                                                        for(Nodo n : parser.hijos){
+                                                                                                parser.getRaiz().agregarHijo(n);
+                                                                                        }
+                                                                                        parser.hijosModule.add(parser.getRaiz());
+                                                                                        :} 
+           |error  main_ parentesisA parentesisC findelinea  INMAIN PIE_SUB|
            sub  main_ error parentesisC findelinea  INMAIN PIE_SUB|
            sub  main_ parentesisA error findelinea  INMAIN PIE_SUB|
            sub  identificador parentesisA PARAMETRO parentesisC findelinea  INMAIN PIE_SUB|
@@ -120,22 +153,89 @@ FIN_CON_COMENT ::= findelinea | comentario findelinea;
 
 COMENTARIO_ILIMITADO ::= comentario findelinea| comentario findelinea COMENTARIO_ILIMITADO|comentario;
 
-INMAIN ::= ULTIMO|comentario  findelinea INMAIN|
-           console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INMAIN|DECLARACION INMAIN|
-           SENTENCIA_MAIN INMAIN|LLAMAR_FUNCION FIN_CON_COMENT INMAIN |LLAMAR_SUB  INMAIN| exit sub FIN_CON_COMENT INMAIN|
-           console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INMAIN|
-           console_ punto readline parentesisA parentesisC FIN_CON_COMENT INMAIN |error findelinea INMAIN|exit error FIN_CON_COMENT INMAIN|error sub FIN_CON_COMENT INMAIN;
+INMAIN ::= ULTIMO 
+           |comentario  findelinea INMAIN                                           {:
+                                                                                    parser.guardarNodoRaiz("comentario");
+                                                                                    parser.hijos.add(parser.getRaiz());
+                                                                                    :}
+                                       
+           |console_ punto writeline parentesisA  INPARENTESIS parentesisC 
+            FIN_CON_COMENT INMAIN                                                   {:
+                                                                                    parser.guardarNodoRaiz("console.writeline()");
+                                                                                    parser.hijos.add(parser.getRaiz());
+                                                                                    :}
+
+           |DECLARACION INMAIN                                                      {:
+                                                                                    parser.guardarNodoRaiz("declaracion");
+                                                                                    parser.hijos.add(parser.getRaiz());
+                                                                                    :}
+
+           |SENTENCIA_MAIN INMAIN
+           |LLAMAR_FUNCION FIN_CON_COMENT INMAIN                                    {:
+                                                                                    parser.guardarNodoRaiz("funcion");
+                                                                                    parser.hijos.add(parser.getRaiz());
+                                                                                    :}
+
+           |LLAMAR_SUB  INMAIN                                                      {:
+                                                                                    parser.guardarNodoRaiz("subproceso");
+                                                                                    parser.hijos.add(parser.getRaiz());
+                                                                                    :} 
+
+           |exit sub FIN_CON_COMENT INMAIN                                          {:
+                                                                                    parser.guardarNodoRaiz("exit subproceso");
+                                                                                    parser.hijos.add(parser.getRaiz());
+                                                                                    :} 
+           |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INMAIN  {:
+                                                                                    parser.guardarNodoRaiz("console.writeline()");
+                                                                                    parser.hijos.add(parser.getRaiz());
+                                                                                    :} 
+
+           |console_ punto readline parentesisA parentesisC FIN_CON_COMENT INMAIN   {:
+                                                                                    parser.guardarNodoRaiz("console.readline()");
+                                                                                    parser.hijos.add(parser.getRaiz());
+                                                                                    :} 
+
+           |error findelinea INMAIN
+           |exit error FIN_CON_COMENT INMAIN
+           |error sub FIN_CON_COMENT INMAIN;
 
 ULTIMO ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT
-            |DECLARACION
+            |DECLARACION                                                        {: 
+                                                                                parser.guardarNodoRaiz("declaracion");
+                                                                                parser.hijos.add(parser.getRaiz());
+                                                                                :}
+
             |SENTENCIA_MAIN
-            |comentario findelinea 
-            |LLAMAR_FUNCION FIN_CON_COMENT
-            |LLAMAR_SUB 
-            |exit sub FIN_CON_COMENT
+            |comentario findelinea                                              {: 
+                                                                                parser.guardarNodoRaiz("comentario");
+                                                                                parser.hijos.add(parser.getRaiz());
+                                                                                :} 
+
+            |LLAMAR_FUNCION FIN_CON_COMENT                                      {: 
+                                                                                parser.guardarNodoRaiz("funcion");
+                                                                                parser.hijos.add(parser.getRaiz());
+                                                                                :} 
+
+            |LLAMAR_SUB                                                         {: 
+                                                                                parser.guardarNodoRaiz("subproceso");
+                                                                                parser.hijos.add(parser.getRaiz());
+                                                                                :}
+ 
+            |exit sub FIN_CON_COMENT                                            {: 
+                                                                                parser.guardarNodoRaiz("exit subproceso");
+                                                                                parser.hijos.add(parser.getRaiz());
+                                                                                :} 
+            
+            |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT    {: 
+                                                                                parser.guardarNodoRaiz("console.writeline()");
+                                                                                parser.hijos.add(parser.getRaiz());
+                                                                                :} 
+
+            |console_ punto readline parentesisA parentesisC FIN_CON_COMENT     {: 
+                                                                                parser.guardarNodoRaiz("console.readline()");
+                                                                                parser.hijos.add(parser.getRaiz());
+                                                                                :} 
             |error sub FIN_CON_COMENT
-            |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT
-            |console_ punto readline parentesisA parentesisC FIN_CON_COMENT
             |error findelinea
             |error PIE_SUB;
        
@@ -326,24 +426,48 @@ PARAMETRO_SENCILLO ::=  PARAMETROS_TYPE  parentesisC|PARAMETROS_TYPE coma_ PARAM
 
 PARAMETROS_TYPE ::= identificador|BOOLEAN|NUMERO;
 
-DECLARACIONSENCILLA ::= dim identificador as TYPE_ FIN_CON_COMENT
+DECLARACIONSENCILLA ::= dim identificador as TYPE_ FIN_CON_COMENT                                       {:
+                                                                                                        parser.guardarNodoRaiz("Dim identificador AS Type");
+                                                                                                        parser.hijosStructure.add(parser.getRaiz());
+                                                                                                        :}
+                       |dim identificador as TYPE_ FIN_CON_COMENT DECLARACIONSENCILLA                   {:
+                                                                                                        parser.guardarNodoRaiz("Dim identificador AS Type");
+                                                                                                        parser.hijosStructure.add(parser.getRaiz());
+                                                                                                        :}
                        |dim error as TYPE_ FIN_CON_COMENT
                        |dim identificador error TYPE_ FIN_CON_COMENT
                        |dim identificador as error FIN_CON_COMENT
-                       |dim identificador as TYPE_ FIN_CON_COMENT DECLARACIONSENCILLA
                        |dim error as TYPE_ FIN_CON_COMENT DECLARACIONSENCILLA
                        |dim identificador error TYPE_ FIN_CON_COMENT DECLARACIONSENCILLA
                   
                         ;
 
-STRUCT_ ::= Public_ struct_ identificador FIN_CON_COMENT DECLARACIONSENCILLA PIE_STRUCT |
-            error struct_ identificador FIN_CON_COMENT DECLARACIONSENCILLA PIE_STRUCT |
-            Public_ error identificador FIN_CON_COMENT DECLARACIONSENCILLA PIE_STRUCT |
-            Public_ struct_ error FIN_CON_COMENT DECLARACIONSENCILLA PIE_STRUCT ;
+STRUCT_ ::= Public_ struct_ identificador FIN_CON_COMENT DECLARACIONSENCILLA PIE_STRUCT                 {:
+                                                                                                        parser.guardarNodoRaiz("public struct identificador");
+                                                                                                        Collections.reverse(parser.hijosStructure);
+                                                                                                        for(Nodo n : parser.hijosStructure){
+                                                                                                                parser.getRaiz().agregarHijo(n);
+                                                                                                        }
+                                                                                                        parser.hijosModule.add(parser.getRaiz());
+                                                                                                        :}           
+
+
+
+            |error struct_ identificador FIN_CON_COMENT DECLARACIONSENCILLA PIE_STRUCT 
+            |Public_ error identificador FIN_CON_COMENT DECLARACIONSENCILLA PIE_STRUCT 
+            |Public_ struct_ error FIN_CON_COMENT DECLARACIONSENCILLA PIE_STRUCT ;
 
 PIE_STRUCT ::= end_ struct_|error struct_|end_ error;
 
-FUNCION_ ::= private_ function_ identificador parentesisA PARAMETRO parentesisC as TYPE_ FIN_CON_COMENT INFUNCION PIE_FUNCION
+FUNCION_ ::= private_ function_ identificador parentesisA PARAMETRO parentesisC as TYPE_ FIN_CON_COMENT INFUNCION PIE_FUNCION   {:
+                                                                                                                                parser.guardarNodoRaiz("public function identificador()");
+                                                                                                                                Collections.reverse(parser.hijosFuncion);
+                                                                                                                                for(Nodo n : parser.hijosFuncion){
+                                                                                                                                        parser.getRaiz().agregarHijo(n);
+                                                                                                                                }
+                                                                                                                                parser.hijosModule.add(parser.getRaiz());
+                                                                                                                                :}
+
             |error function_ identificador parentesisA PARAMETRO parentesisC as TYPE_ FIN_CON_COMENT INFUNCION PIE_FUNCION
             |private_ error identificador parentesisA PARAMETRO parentesisC as TYPE_ FIN_CON_COMENT INFUNCION PIE_FUNCION
             |private_ function_ error parentesisA PARAMETRO parentesisC as TYPE_ FIN_CON_COMENT INFUNCION PIE_FUNCION
@@ -360,11 +484,92 @@ PIE_FUNCION ::= end_ function_|error function_|end_ error;
 
 PARAMETRO ::= identificador as TYPE_|identificador as TYPE_ coma_ PARAMETRO|byval identificador as TYPE_ coma_ PARAMETRO|byval identificador as TYPE_;
 
-INFUNCION ::=  console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT|SENTENCIA_FUNCION|comentario findelinea | comentario  findelinea INFUNCION|
-               LLAMAR_FUNCION FIN_CON_COMENT|console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INFUNCION|
-               SENTENCIA_FUNCION INFUNCION|LLAMAR_FUNCION FIN_CON_COMENT INFUNCION|LLAMAR_SUB |LLAMAR_SUB  INFUNCION|exit function_ FIN_CON_COMENT INFUNCION|exit function_ FIN_CON_COMENT|
-               console_ punto writeline parentesisA parentesisC FIN_CON_COMENT|console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INFUNCION|
-               console_ punto readline parentesisA parentesisC FIN_CON_COMENT|console_ punto readline parentesisA parentesisC FIN_CON_COMENT INFUNCION;
+INFUNCION ::=  console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT                        {: 
+                                                                                                                    parser.guardarNodoRaiz("console.writeline()");
+                                                                                                                    parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                    :}
+
+              |DECLARACION                                                                                          {: 
+                                                                                                                    parser.guardarNodoRaiz("declaracion");
+                                                                                                                    parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                    :}
+
+
+              |DECLARACION INFUNCION                                                                                {: 
+                                                                                                                    parser.guardarNodoRaiz("declaracion");
+                                                                                                                    parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                    :}
+
+              |SENTENCIA_FUNCION
+
+              |comentario findelinea                                                                                {: 
+                                                                                                                    parser.guardarNodoRaiz("comentario");
+                                                                                                                    parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                    :}
+
+              |comentario  findelinea INFUNCION                                                                     {: 
+                                                                                                                    parser.guardarNodoRaiz("comentario");
+                                                                                                                    parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                    :}
+
+              |LLAMAR_FUNCION FIN_CON_COMENT                                                                        {: 
+                                                                                                                    parser.guardarNodoRaiz("funcion");
+                                                                                                                    parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                    :}
+
+              |console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INFUNCION              {: 
+                                                                                                                    parser.guardarNodoRaiz("console.writeline()");
+                                                                                                                    parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                    :}
+
+              |SENTENCIA_FUNCION INFUNCION
+
+              |LLAMAR_FUNCION FIN_CON_COMENT INFUNCION                                                              {: 
+                                                                                                                    parser.guardarNodoRaiz("funcion");
+                                                                                                                    parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                    :}
+
+              |LLAMAR_SUB                                                                                           {: 
+                                                                                                                    parser.guardarNodoRaiz("subproceso");
+                                                                                                                    parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                    :}
+
+              |LLAMAR_SUB  INFUNCION                                                                                {: 
+                                                                                                                    parser.guardarNodoRaiz("subproceso");
+                                                                                                                    parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                    :}
+
+              |exit function_ FIN_CON_COMENT INFUNCION                                                              {: 
+                                                                                                                    parser.guardarNodoRaiz("exit function");
+                                                                                                                    parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                    :}
+
+              |exit function_ FIN_CON_COMENT                                                                        {: 
+                                                                                                                    parser.guardarNodoRaiz("exit function");
+                                                                                                                    parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                    :}
+
+              |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT                                      {: 
+                                                                                                                    parser.guardarNodoRaiz("console.writeline()");
+                                                                                                                    parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                    :}
+
+              |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INFUNCION                            {: 
+                                                                                                                    parser.guardarNodoRaiz("console.writeline()");
+                                                                                                                    parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                    :}
+
+              |console_ punto readline parentesisA parentesisC FIN_CON_COMENT                                       {: 
+                                                                                                                    parser.guardarNodoRaiz("console.readline()");
+                                                                                                                    parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                    :}
+
+              |console_ punto readline parentesisA parentesisC FIN_CON_COMENT INFUNCION                            {: 
+                                                                                                                    parser.guardarNodoRaiz("console.readline()");
+                                                                                                                    parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                    :};
+
+
 
 SENTENCIA_FUNCION ::= IF_FUNCION|FOR_FUNCION|WHILE_FUNCION;
 

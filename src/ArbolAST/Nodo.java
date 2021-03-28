@@ -47,13 +47,13 @@ public class Nodo {
     }
 
     public void print (String prefijo, boolean esHoja) {
-        System.out.println (prefijo + (esHoja ? "|____" : "|── ") + toString ());
+        System.out.println (prefijo + (esHoja ? " |___ " : " |──── ") + toString ());
         for (int i = 0; i < hijos.size() - 1; i++) {
-            hijos.get(i).print(prefijo + (esHoja ? "    " : "|   "), false);
+            hijos.get(i).print(prefijo + (esHoja ? "    " : " |   "), false);
         }
         if (hijos.size() > 0) {
             hijos.get(hijos.size () - 1)
-                    .print(prefijo + (esHoja ?"    " : "|   "), true);
+                    .print(prefijo + (esHoja ?"    " : " |   "), true);
         }
     }
 
