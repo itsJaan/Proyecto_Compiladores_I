@@ -16,10 +16,21 @@ parser code
     ArrayList<Nodo> hijosStructure = new ArrayList<Nodo>();
     ArrayList<Nodo> hijosFuncion = new ArrayList<Nodo>();
     ArrayList<Nodo> hijosIfMain = new ArrayList<Nodo>();
+    ArrayList<Nodo> hijosElseMain = new ArrayList<Nodo>();
+    ArrayList<Nodo> hijosElseIfMain = new ArrayList<Nodo>();
     ArrayList<Nodo> hijosForMain = new ArrayList<Nodo>();
     ArrayList<Nodo> hijosWhileMain = new ArrayList<Nodo>();
     ArrayList<Nodo> hijosForFuncion = new ArrayList<Nodo>();
     ArrayList<Nodo> hijosWhileFuncion = new ArrayList<Nodo>();
+    ArrayList<Nodo> hijosWhileFor = new ArrayList<Nodo>();
+    ArrayList<Nodo> hijosForWhile = new ArrayList<Nodo>();
+    ArrayList<Nodo> hijosWhileForFuncion = new ArrayList<Nodo>();
+    ArrayList<Nodo> hijosForWhileFuncion = new ArrayList<Nodo>();
+    ArrayList<Nodo> hijosIfWhileMain = new ArrayList<Nodo>();
+    ArrayList<Nodo> hijosIfForMain = new ArrayList<Nodo>();
+    ArrayList<Nodo> hijosIfFuncion = new ArrayList<Nodo>();
+    ArrayList<Nodo> hijosIfForFuncion = new ArrayList<Nodo>();
+    ArrayList<Nodo> hijosIfWhileFuncion = new ArrayList<Nodo>();
     
 
     public static Arbol arbol;
@@ -82,7 +93,7 @@ non terminal UC, IMPORTS, MODULE, IDENTIFICADOR_IMPORT, FUNCTION_, STRUCT_, MAIN
              INIF_FUNCION , INIF_FOR_FUNCION , INIF_WHILE_FUNCION,ELSE_IF_WHILE_FUNCION2 ,ELSE_IF_WHILE2,
              ELSE_IF_MAIN2 ,ELSE_IF_FOR2 ,ELSE_IF_FUNCION2,ELSE_IF_FOR_FUNCION2, NUMERO,LLAMAR_SUB,PARAMETROS_TYPE, WHILE_TYPE,ELSEIF_TYPE,
              OPERACION_AR,FIN_CON_COMENT,PARAMETROS_SUB,OPERANDOS_TYPE,READLINE_FUNCION,COMENTARIO_ILIMITADO,ULTIMO,PIE_SUB,PIE_MODULE,PIE_FUNCION,
-             PIE_STRUCT;
+             PIE_STRUCT,INIF_ELSE,INIF_ELSEIF;
 
 
 precedence left suma, resta;
@@ -401,26 +412,42 @@ ELSEIF_TYPE ::=     else_ if_
 
 IF_MAIN ::=         if_ CONDICION then FIN_CON_COMENT INIF end_ if_ FIN_CON_COMENT                                                          {:
                                                                                                                                             parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                            for(Nodo n : parser.hijosIfMain){
+                                                                                                                                                    parser.getRaiz().agregarHijo(n);
+                                                                                                                                            }
                                                                                                                                             parser.hijos.add(parser.getRaiz());
                                                                                                                                             Collections.reverse(parser.hijos);
                                                                                                                                             :} 
                                                                                                                                                                       
-                    |if_ CONDICION then FIN_CON_COMENT INIF else_ FIN_CON_COMENT INIF end_ if_ FIN_CON_COMENT                               {:
+                    |if_ CONDICION then FIN_CON_COMENT INIF else_ FIN_CON_COMENT INIF_ELSE end_ if_ FIN_CON_COMENT                               {:
+                                                                                                                                            parser.guardarNodoRaiz("else");
+                                                                                                                                            for(Nodo n : parser.hijosElseMain){
+                                                                                                                                                    parser.getRaiz().agregarHijo(n);
+                                                                                                                                            }
+                                                                                                                                            parser.hijos.add(parser.getRaiz());
                                                                                                                                             parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                            for(Nodo n : parser.hijosIfMain){
+                                                                                                                                                    parser.getRaiz().agregarHijo(n);
+                                                                                                                                            }
                                                                                                                                             parser.hijos.add(parser.getRaiz());
                                                                                                                                             Collections.reverse(parser.hijos);
-                                                                                                                                            parser.guardarNodoRaiz("else");
-                                                                                                                                            parser.hijos.add(parser.getRaiz());
                                                                                                                                             :}
-                    |if_ CONDICION then FIN_CON_COMENT INIF ELSE_IF_MAIN FIN_CON_COMENT INIF end_ if_ FIN_CON_COMENT                        {:
+                    |if_ CONDICION then FIN_CON_COMENT INIF ELSE_IF_MAIN FIN_CON_COMENT INIF_ELSE end_ if_ FIN_CON_COMENT                        {:
+                                                                                                                                            parser.guardarNodoRaiz("elseif condicion then"); 
+                                                                                                                                            parser.hijos.add(parser.getRaiz());
                                                                                                                                             parser.guardarNodoRaiz("if condicion then");
                                                                                                                                             parser.hijos.add(parser.getRaiz());
                                                                                                                                             Collections.reverse(parser.hijos);
                                                                                                                                             :}
                     |if_ CONDICION then FIN_CON_COMENT INIF ELSE_IF_MAIN2 end_ if_ FIN_CON_COMENT                                           {:
+                                                                                                                                            
                                                                                                                                             parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                            for(Nodo n : parser.hijosIfMain){
+                                                                                                                                                    parser.getRaiz().agregarHijo(n);
+                                                                                                                                            }
                                                                                                                                             parser.hijos.add(parser.getRaiz());
                                                                                                                                             Collections.reverse(parser.hijos);
+                                                                                                                                            parser.hijosElseIfMain.clear();
                                                                                                                                             :};
 
 INIF ::=            console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT                                           {:
@@ -508,23 +535,205 @@ INIF ::=            console_ punto writeline parentesisA  INPARENTESIS parentesi
                                                                                                                                             :};
 
 
-ELSE_IF_MAIN ::=    ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF  ELSE_IF_MAIN                                                            {: 
-                                                                                                                                            parser.guardarNodoRaiz("elseif condicion then");
-                                                                                                                                            parser.hijos.add(parser.getRaiz());
+INIF_ELSE ::=            console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT                                           {:
+                                                                                                                                            parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                                            parser.hijosElseMain.add(parser.getRaiz());
                                                                                                                                             :}
-                    |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF else_                                                                   {: 
+ 
+                    |DECLARACION                                                                                                            {:
+                                                                                                                                            parser.guardarNodoRaiz("declaracion");
+                                                                                                                                            parser.hijosElseMain.add(parser.getRaiz());
+                                                                                                                                            :}
+            
+                    |SENTENCIA_MAIN                                                                                             
+
+                    |comentario findelinea                                                                                                  {:
+                                                                                                                                            parser.guardarNodoRaiz("comentario");
+                                                                                                                                            parser.hijosElseMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |comentario  findelinea INIF_ELSE                                                                                            {:
+                                                                                                                                            parser.guardarNodoRaiz("comentario");
+                                                                                                                                            parser.hijosElseMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |LLAMAR_FUNCION FIN_CON_COMENT                                                                                          {:
+                                                                                                                                            parser.guardarNodoRaiz("funcion()");
+                                                                                                                                            parser.hijosElseMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INIF_ELSE                                     {:
+                                                                                                                                            parser.guardarNodoRaiz("console.writeline()");
+                                                                                                                                            parser.hijosElseMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |DECLARACION INIF                                                                                                       {:
+                                                                                                                                            parser.guardarNodoRaiz("declaracion");
+                                                                                                                                            parser.hijosElseMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |SENTENCIA_MAIN findelinea INIF_ELSE
+
+                    |LLAMAR_FUNCION FIN_CON_COMENT INIF_ELSE                                                                                     {:
+                                                                                                                                            parser.guardarNodoRaiz("funcion()");
+                                                                                                                                            parser.hijosElseMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |LLAMAR_SUB                                                                                                             {:
+                                                                                                                                            parser.guardarNodoRaiz("subproceso()");
+                                                                                                                                            parser.hijosElseMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |LLAMAR_SUB  INIF_ELSE                                                                                                       {:
+                                                                                                                                            parser.guardarNodoRaiz("subproceso()");
+                                                                                                                                            parser.hijosElseMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |exit sub FIN_CON_COMENT INIF_ELSE                                                                                           {:
+                                                                                                                                            parser.guardarNodoRaiz("exit sub");
+                                                                                                                                            parser.hijosElseMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |exit sub FIN_CON_COMENT                                                                                                {:
+                                                                                                                                            parser.guardarNodoRaiz("exit sub");
+                                                                                                                                            parser.hijosElseMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT                                                        {:
+                                                                                                                                            parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                                            parser.hijosElseMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INIF_ELSE                                                   {:
+                                                                                                                                            parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                                            parser.hijosElseMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |console_ punto readline parentesisA parentesisC FIN_CON_COMENT                                                         {:
+                                                                                                                                            parser.guardarNodoRaiz("console.readLine()");
+                                                                                                                                            parser.hijosElseMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |console_ punto readline parentesisA parentesisC FIN_CON_COMENT INIF_ELSE                                                    {:
+                                                                                                                                            parser.guardarNodoRaiz("console.readLine()");
+                                                                                                                                            parser.hijosElseMain.add(parser.getRaiz());
+                                                                                                                                            :};
+
+
+
+
+INIF_ELSEIF ::=            console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT                                           {:
+                                                                                                                                            parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                                            parser.hijosElseIfMain.add(parser.getRaiz());
+                                                                                                                                            :}
+ 
+                    |DECLARACION                                                                                                            {:
+                                                                                                                                            parser.guardarNodoRaiz("declaracion");
+                                                                                                                                            parser.hijosElseIfMain.add(parser.getRaiz());
+                                                                                                                                            :}
+            
+                    |SENTENCIA_MAIN                                                                                             
+
+                    |comentario findelinea                                                                                                  {:
+                                                                                                                                            parser.guardarNodoRaiz("comentario");
+                                                                                                                                            parser.hijosElseIfMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |comentario  findelinea INIF_ELSEIF                                                                                            {:
+                                                                                                                                            parser.guardarNodoRaiz("comentario");
+                                                                                                                                            parser.hijosElseIfMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |LLAMAR_FUNCION FIN_CON_COMENT                                                                                          {:
+                                                                                                                                            parser.guardarNodoRaiz("funcion()");
+                                                                                                                                            parser.hijosElseIfMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INIF_ELSEIF                                     {:
+                                                                                                                                            parser.guardarNodoRaiz("console.writeline()");
+                                                                                                                                            parser.hijosElseIfMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |DECLARACION INIF_ELSEIF                                                                                                       {:
+                                                                                                                                            parser.guardarNodoRaiz("declaracion");
+                                                                                                                                            parser.hijosElseIfMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |SENTENCIA_MAIN findelinea INIF_ELSEIF
+
+                    |LLAMAR_FUNCION FIN_CON_COMENT INIF_ELSEIF                                                                                     {:
+                                                                                                                                            parser.guardarNodoRaiz("funcion()");
+                                                                                                                                            parser.hijosElseIfMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |LLAMAR_SUB                                                                                                             {:
+                                                                                                                                            parser.guardarNodoRaiz("subproceso()");
+                                                                                                                                            parser.hijosElseIfMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |LLAMAR_SUB  INIF_ELSEIF                                                                                                       {:
+                                                                                                                                            parser.guardarNodoRaiz("subproceso()");
+                                                                                                                                            parser.hijosElseIfMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |exit sub FIN_CON_COMENT INIF_ELSEIF                                                                                          {:
+                                                                                                                                            parser.guardarNodoRaiz("exit sub");
+                                                                                                                                            parser.hijosElseIfMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |exit sub FIN_CON_COMENT                                                                                                {:
+                                                                                                                                            parser.guardarNodoRaiz("exit sub");
+                                                                                                                                            parser.hijosElseIfMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT                                                        {:
+                                                                                                                                            parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                                            parser.hijosElseIfMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INIF_ELSEIF                                                   {:
+                                                                                                                                            parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                                            parser.hijosElseIfMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |console_ punto readline parentesisA parentesisC FIN_CON_COMENT                                                         {:
+                                                                                                                                            parser.guardarNodoRaiz("console.readLine()");
+                                                                                                                                            parser.hijosElseIfMain.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |console_ punto readline parentesisA parentesisC FIN_CON_COMENT INIF_ELSEIF                                                    {:
+                                                                                                                                            parser.guardarNodoRaiz("console.readLine()");
+                                                                                                                                            parser.hijosElseIfMain.add(parser.getRaiz());
+                                                                                                                                            :};
+
+
+
+ELSE_IF_MAIN ::=    ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_ELSEIF  ELSE_IF_MAIN                                                            
+                    |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_ELSEIF else_                                                                   {: 
                                                                                                                                             parser.guardarNodoRaiz("else");
                                                                                                                                             parser.hijos.add(parser.getRaiz());
                                                                                                                                             parser.guardarNodoRaiz("elseif condicion then");
                                                                                                                                             parser.hijos.add(parser.getRaiz());
                                                                                                                                             :};
-ELSE_IF_MAIN2::=    ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF  ELSE_IF_MAIN2                                                           {: 
+ELSE_IF_MAIN2::=    ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_ELSEIF  ELSE_IF_MAIN2                                                    {: 
+                                                                                                                                              
+                                                                                                                                            System.out.println(parser.hijosElseIfMain.toString());
                                                                                                                                             parser.guardarNodoRaiz("elseif condicion then");
+                                                                                                                                            for(Nodo n : parser.hijosElseIfMain){
+                                                                                                                                                    parser.getRaiz().agregarHijo(n);
+                                                                                                                                            }
+                                                                                                                                            
                                                                                                                                             parser.hijos.add(parser.getRaiz());
+                                                                                                                                            
                                                                                                                                             :}
-                    |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF                                                                         {: 
+                    |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_ELSEIF                                                                  {: 
                                                                                                                                             parser.guardarNodoRaiz("elseif condicion then");
+                                                                                                                                            for(Nodo n : parser.hijosElseIfMain){
+                                                                                                                                                    parser.getRaiz().agregarHijo(n);
+                                                                                                                                            }
+                                                                                                                                            
                                                                                                                                             parser.hijos.add(parser.getRaiz());
+                                                                                                                                            
                                                                                                                                             :};
 
 CONDICION ::=        identificador OPERADORRELACIONAL identificador
@@ -674,39 +883,151 @@ INIF_FOR ::=        console_ punto writeline parentesisA  INPARENTESIS parentesi
                     |console_ punto readline parentesisA parentesisC FIN_CON_COMENT
                     |console_ punto readline parentesisA parentesisC FIN_CON_COMENT INIF_FOR;
 
-IF_FOR ::=          if_ CONDICION then FIN_CON_COMENT INIF_FOR  end_ if_ FIN_CON_COMENT
-                    |if_ CONDICION then FIN_CON_COMENT INIF_FOR  else_ FIN_CON_COMENT INIF_FOR  end_ if_ FIN_CON_COMENT
-                    |if_ CONDICION then FIN_CON_COMENT INIF_FOR ELSE_IF_FOR FIN_CON_COMENT INIF_FOR end_ if_ FIN_CON_COMENT
-                    |if_ CONDICION then FIN_CON_COMENT INIF_FOR ELSE_IF_FOR2 end_ if_ FIN_CON_COMENT;
+IF_FOR ::=          if_ CONDICION then FIN_CON_COMENT INIF_FOR  end_ if_ FIN_CON_COMENT                                                     {:
+                                                                                                                                            parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                            parser.hijosForMain.add(parser.getRaiz());
+                                                                                                                                            :}
 
-ELSE_IF_FOR ::=     ELSEIF_TYPE CONDICION then FIN_CON_COMENT  INIF_FOR else_
-                    |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FOR ELSE_IF_FOR;
+                    |if_ CONDICION then FIN_CON_COMENT INIF_FOR  else_ FIN_CON_COMENT INIF_FOR  end_ if_ FIN_CON_COMENT                     {:
+                                                                                                                                            parser.guardarNodoRaiz("else");
+                                                                                                                                            parser.hijosForMain.add(parser.getRaiz());
+                                                                                                                                            parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                            parser.hijosForMain.add(parser.getRaiz());
+                                                                                                                                            :}
 
-ELSE_IF_FOR2::=     ELSEIF_TYPE CONDICION then FIN_CON_COMENT  INIF_FOR
-                    |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FOR ELSE_IF_FOR2;
+                    |if_ CONDICION then FIN_CON_COMENT INIF_FOR ELSE_IF_FOR FIN_CON_COMENT INIF_FOR end_ if_ FIN_CON_COMENT                 {:
+                                                                                                                
+                                                                                                                                            
+                                                                                                                                            parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                            parser.hijosForMain.add(parser.getRaiz());
+                                                                                                                                            :}
 
-WHILE_FOR::=        do_ WHILE_TYPE CONDICION FIN_CON_COMENT INWHILE_FOR loop FIN_CON_COMENT;
+                    |if_ CONDICION then FIN_CON_COMENT INIF_FOR ELSE_IF_FOR2 end_ if_ FIN_CON_COMENT                                        {:
+                                                                                                                                            parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                            parser.hijosForMain.add(parser.getRaiz());
+                                                                                                                                            :};           
 
-INWHILE_FOR ::=      console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT
-                    |DECLARACION
-                    |SENTENCIA_WHILE
-                    |comentario findelinea 
-                    |comentario  findelinea INWHILE_FOR
-                    |console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INWHILE_FOR
-                    |DECLARACION INWHILE_FOR
+ELSE_IF_FOR ::=     ELSEIF_TYPE CONDICION then FIN_CON_COMENT  INIF_FOR else_                                                               {:
+                                                                                                                                            parser.guardarNodoRaiz("else");
+                                                                                                                                            parser.hijosForMain.add(parser.getRaiz());
+                                                                                                                                            parser.guardarNodoRaiz("elseif condicion then");
+                                                                                                                                            parser.hijosForMain.add(parser.getRaiz());
+                                                                                                                                            :}
+                    |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FOR ELSE_IF_FOR                                                         {:
+                                                                                                                                            parser.guardarNodoRaiz("elseif condicion then");
+                                                                                                                                            parser.hijosForMain.add(parser.getRaiz());
+                                                                                                                                            :};
+
+ELSE_IF_FOR2::=     ELSEIF_TYPE CONDICION then FIN_CON_COMENT  INIF_FOR                                                                     {:
+                                                                                                                                            parser.guardarNodoRaiz("elseif condicion then");
+                                                                                                                                            parser.hijosForMain.add(parser.getRaiz());
+                                                                                                                                            :}
+                    |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FOR ELSE_IF_FOR2                                                        {:
+                                                                                                                                            parser.guardarNodoRaiz("elseif condicion then");
+                                                                                                                                            parser.hijosForMain.add(parser.getRaiz());
+                                                                                                                                            :};
+
+WHILE_FOR::=        do_ WHILE_TYPE CONDICION FIN_CON_COMENT INWHILE_FOR loop FIN_CON_COMENT                                                 {: 
+                                                                                                                                            parser.guardarNodoRaiz("do while condicion");
+                                                                                                                                            parser.hijosForMain.add(parser.getRaiz());
+                                                                                                                                            for(Nodo n : parser.hijosWhileFor){
+                                                                                                                                                    parser.getRaiz().agregarHijo(n);
+                                                                                                                                            }
+                                                                                                                                            Nodo tmp = new Nodo("Loop");
+                                                                                                                                            parser.getRaiz().agregarHijo(tmp);
+                                                                                                                                            
+                                                                                                                                            :};
+
+INWHILE_FOR ::=      console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT                                          {:
+                                                                                                                                            parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                                            parser.hijosWhileFor.add(parser.getRaiz());
+                                                                                                                                            :}
+  
+                    |DECLARACION                                                                                                            {:
+                                                                                                                                            parser.guardarNodoRaiz("declaracion");
+                                                                                                                                            parser.hijosWhileFor.add(parser.getRaiz());
+                                                                                                                                            :}
+                    |SENTENCIA_WHILE                                                                                                        
+
+                    |comentario findelinea                                                                                                  {:
+                                                                                                                                            parser.guardarNodoRaiz("comentario");
+                                                                                                                                            parser.hijosWhileFor.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |comentario  findelinea INWHILE_FOR                                                                                     {:
+                                                                                                                                            parser.guardarNodoRaiz("comentario");
+                                                                                                                                            parser.hijosWhileFor.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INWHILE_FOR                              {:
+                                                                                                                                            parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                                            parser.hijosWhileFor.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |DECLARACION INWHILE_FOR                                                                                                {:
+                                                                                                                                            parser.guardarNodoRaiz("declaracion");
+                                                                                                                                            parser.hijosWhileFor.add(parser.getRaiz());
+                                                                                                                                            :}
+
                     |SENTENCIA_WHILE INWHILE_FOR
-                    |LLAMAR_FUNCION FIN_CON_COMENT
-                    |LLAMAR_FUNCION FIN_CON_COMENT INWHILE_FOR
-                    |LLAMAR_SUB 
-                    |LLAMAR_SUB  INWHILE_FOR
-                    |exit do_ FIN_CON_COMENT INWHILE_FOR
-                    |exit for_ FIN_CON_COMENT INWHILE_FOR
-                    |exit do_ FIN_CON_COMENT
-                    |exit for_ FIN_CON_COMENT
-                    |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT
-                    |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INWHILE_FOR
-                    |console_ punto readline parentesisA parentesisC FIN_CON_COMENT
-                    |console_ punto readline parentesisA parentesisC FIN_CON_COMENT INWHILE_FOR;
+                    |LLAMAR_FUNCION FIN_CON_COMENT                                                                                          {:
+                                                                                                                                            parser.guardarNodoRaiz("funcion()");
+                                                                                                                                            parser.hijosWhileFor.add(parser.getRaiz());
+                                                                                                                                            :}
+  
+                    |LLAMAR_FUNCION FIN_CON_COMENT INWHILE_FOR                                                                              {:
+                                                                                                                                            parser.guardarNodoRaiz("funcion()");
+                                                                                                                                            parser.hijosWhileFor.add(parser.getRaiz());
+                                                                                                                                            :}
+                                                                             
+                    |LLAMAR_SUB                                                                                                             {:
+                                                                                                                                            parser.guardarNodoRaiz("subproceso()");
+                                                                                                                                            parser.hijosWhileFor.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |LLAMAR_SUB  INWHILE_FOR                                                                                                {:
+                                                                                                                                            parser.guardarNodoRaiz("subproceso()");
+                                                                                                                                            parser.hijosWhileFor.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |exit do_ FIN_CON_COMENT INWHILE_FOR                                                                                    {:
+                                                                                                                                            parser.guardarNodoRaiz("exit do");
+                                                                                                                                            parser.hijosWhileFor.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |exit for_ FIN_CON_COMENT INWHILE_FOR                                                                                   {:
+                                                                                                                                            parser.guardarNodoRaiz("exit for");
+                                                                                                                                            parser.hijosWhileFor.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |exit do_ FIN_CON_COMENT                                                                                                {:
+                                                                                                                                            parser.guardarNodoRaiz("exit do");
+                                                                                                                                            parser.hijosWhileFor.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |exit for_ FIN_CON_COMENT                                                                                               {:
+                                                                                                                                            parser.guardarNodoRaiz("exit for");
+                                                                                                                                            parser.hijosWhileFor.add(parser.getRaiz());
+                                                                                                                                            :}
+                    |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT                                                        {:
+                                                                                                                                            parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                                            parser.hijosWhileFor.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INWHILE_FOR                                            {:
+                                                                                                                                            parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                                            parser.hijosWhileFor.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |console_ punto readline parentesisA parentesisC FIN_CON_COMENT                                                         {:
+                                                                                                                                            parser.guardarNodoRaiz("console.readLine()");
+                                                                                                                                            parser.hijosWhileFor.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |console_ punto readline parentesisA parentesisC FIN_CON_COMENT INWHILE_FOR                                             {:
+                                                                                                                                            parser.guardarNodoRaiz("console.readLine()");
+                                                                                                                                            parser.hijosWhileFor.add(parser.getRaiz());
+                                                                                                                                            :};
 
 WHILE_MAIN::=       do_ WHILE_TYPE CONDICION FIN_CON_COMENT INWHILE_MAIN loop FIN_CON_COMENT                                                {: 
                                                                                                                                             parser.guardarNodoRaiz("do while condicion");
@@ -826,38 +1147,163 @@ INIF_WHILE ::=      console_ punto writeline parentesisA  INPARENTESIS parentesi
                     |console_ punto readline parentesisA parentesisC FIN_CON_COMENT
                     |console_ punto readline parentesisA parentesisC FIN_CON_COMENT INIF_WHILE; 
 
-IF_WHILE ::=        if_ CONDICION then FIN_CON_COMENT INIF_WHILE  end_ if_ FIN_CON_COMENT
-                    |if_ CONDICION then FIN_CON_COMENT INIF_WHILE  else_ FIN_CON_COMENT INIF_WHILE  end_ if_ FIN_CON_COMENT
-                    |if_ CONDICION then FIN_CON_COMENT INIF_WHILE ELSE_IF_WHILE FIN_CON_COMENT INIF_WHILE end_ if_ FIN_CON_COMENT
-                    |if_ CONDICION then FIN_CON_COMENT INIF_WHILE ELSE_IF_WHILE2 end_ if_ FIN_CON_COMENT;
+IF_WHILE ::=        if_ CONDICION then FIN_CON_COMENT INIF_WHILE  end_ if_ FIN_CON_COMENT                                                   {:
+                                                                                                                                            parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                            parser.hijosWhileMain.add(parser.getRaiz());
+                                                                                                                                            :}
 
-ELSE_IF_WHILE ::=   ELSEIF_TYPE CONDICION then FIN_CON_COMENT  INIF_WHILE else_
-                    |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_WHILE ELSE_IF_WHILE;
-ELSE_IF_WHILE2::=   ELSEIF_TYPE CONDICION then FIN_CON_COMENT  INIF_WHILE 
-                    |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_WHILE ELSE_IF_WHILE2;
+                    |if_ CONDICION then FIN_CON_COMENT INIF_WHILE  else_ FIN_CON_COMENT INIF_WHILE  end_ if_ FIN_CON_COMENT                 {:
+                                                                                                                                            parser.guardarNodoRaiz("else");
+                                                                                                                                            parser.hijosWhileMain.add(parser.getRaiz());
+                                                                                                                                            parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                            parser.hijosWhileMain.add(parser.getRaiz());
+                                                                                                                                            :}    
+  
+                    |if_ CONDICION then FIN_CON_COMENT INIF_WHILE ELSE_IF_WHILE FIN_CON_COMENT INIF_WHILE end_ if_ FIN_CON_COMENT           {:
+                                                                                                                                            parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                            parser.hijosWhileMain.add(parser.getRaiz());
+                                                                                                                                            :}
 
-FOR_WHILE ::=       for_ identificador igual NUMERO to NUMERO step_ NUMERO FIN_CON_COMENT INFOR_WHILE next identificador FIN_CON_COMENT;
+                    |if_ CONDICION then FIN_CON_COMENT INIF_WHILE ELSE_IF_WHILE2 end_ if_ FIN_CON_COMENT                                    {:
+                                                                                                                                            parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                            parser.hijosWhileMain.add(parser.getRaiz());
+                                                                                                                                            :};
 
-INFOR_WHILE ::=     console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT
-                    |DECLARACION
-                    |comentario findelinea 
-                    |comentario  findelinea INFOR_WHILE
+ELSE_IF_WHILE ::=   ELSEIF_TYPE CONDICION then FIN_CON_COMENT  INIF_WHILE else_                                                             {:
+                                                                                                                                            parser.guardarNodoRaiz("else");
+                                                                                                                                            parser.hijosWhileMain.add(parser.getRaiz());
+                                                                                                                                            parser.guardarNodoRaiz("elseif condicion then");
+                                                                                                                                            parser.hijosWhileMain.add(parser.getRaiz());
+                                                                                                                                            :}
+                    |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_WHILE ELSE_IF_WHILE                                                     {:
+                                                                                                                                            parser.guardarNodoRaiz("elseif condicion then");
+                                                                                                                                            parser.hijosWhileMain.add(parser.getRaiz());
+                                                                                                                                            :};
+
+ELSE_IF_WHILE2::=   ELSEIF_TYPE CONDICION then FIN_CON_COMENT  INIF_WHILE                                                                   {:
+                                                                                                                                            parser.guardarNodoRaiz("elseif condicion then");
+                                                                                                                                            parser.hijosWhileMain.add(parser.getRaiz());
+                                                                                                                                            :}
+                    |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_WHILE ELSE_IF_WHILE2                                                    {:
+                                                                                                                                            parser.guardarNodoRaiz("elseif condicion then");
+                                                                                                                                            parser.hijosWhileMain.add(parser.getRaiz());
+                                                                                                                                            :};
+
+FOR_WHILE ::=       for_ identificador igual NUMERO to NUMERO step_ NUMERO FIN_CON_COMENT INFOR_WHILE next identificador FIN_CON_COMENT     {: 
+                                                                                                                                            parser.guardarNodoRaiz("for identificador igual numero to numero step numero");
+                                                                                                                                            parser.hijosWhileMain.add(parser.getRaiz());
+                                                                                                                                            Collections.reverse(parser.hijosForWhile);
+                                                                                                                                            for(Nodo n : parser.hijosForWhile){
+                                                                                                                                                    parser.getRaiz().agregarHijo(n);
+                                                                                                                                            }
+                                                                                                                                            Nodo tmp = new Nodo("next identificador");
+                                                                                                                                            parser.getRaiz().agregarHijo(tmp);
+                                                                                                                                            :};
+
+INFOR_WHILE ::=     console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT                                           {:
+                                                                                                                                            parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                                            parser.hijosForWhile.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |DECLARACION                                                                                                            {:
+                                                                                                                                            parser.guardarNodoRaiz("declaracion");
+                                                                                                                                            parser.hijosForWhile.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |comentario findelinea                                                                                                  {:
+                                                                                                                                            parser.guardarNodoRaiz("comentario");
+                                                                                                                                            parser.hijosForWhile.add(parser.getRaiz());
+                                                                                                                                            :}
+
+
+                    |comentario  findelinea INFOR_WHILE                                                                                     {:
+                                                                                                                                            parser.guardarNodoRaiz("comentario");
+                                                                                                                                            parser.hijosForWhile.add(parser.getRaiz());
+                                                                                                                                            :}
+
+
                     |SENTENCIA_FOR
-                    |console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INFOR_WHILE
-                    |DECLARACION INFOR_WHILE
+
+                    |console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INFOR_WHILE                              {:
+                                                                                                                                            parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                                            parser.hijosForWhile.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |DECLARACION INFOR_WHILE                                                                                                {:
+                                                                                                                                            parser.guardarNodoRaiz("declaracion");
+                                                                                                                                            parser.hijosForWhile.add(parser.getRaiz());
+                                                                                                                                            :}
+
+
                     |SENTENCIA_FOR INFOR_WHILE
-                    |LLAMAR_FUNCION FIN_CON_COMENT
-                    |LLAMAR_FUNCION FIN_CON_COMENT INFOR_WHILE 
-                    |LLAMAR_SUB 
-                    |LLAMAR_SUB  INFOR_WHILE
-                    |exit for_ FIN_CON_COMENT INFOR_WHILE
-                    |exit do_ FIN_CON_COMENT INFOR_WHILE
-                    |exit for_ FIN_CON_COMENT
-                    |exit do_ FIN_CON_COMENT
-                    |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT
-                    |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INFOR_WHILE
-                    |console_ punto readline parentesisA parentesisC FIN_CON_COMENT
-                    |console_ punto readline parentesisA parentesisC FIN_CON_COMENT INFOR_WHILE;
+
+                    |LLAMAR_FUNCION FIN_CON_COMENT                                                                                          {:
+                                                                                                                                            parser.guardarNodoRaiz("funcion()");
+                                                                                                                                            parser.hijosForWhile.add(parser.getRaiz());
+                                                                                                                                            :}
+
+
+                    |LLAMAR_FUNCION FIN_CON_COMENT INFOR_WHILE                                                                              {:
+                                                                                                                                            parser.guardarNodoRaiz("funcion()");
+                                                                                                                                            parser.hijosForWhile.add(parser.getRaiz());
+                                                                                                                                            :}
+
+ 
+                    |LLAMAR_SUB                                                                                                             {:
+                                                                                                                                            parser.guardarNodoRaiz("subproceso()");
+                                                                                                                                            parser.hijosForWhile.add(parser.getRaiz());
+                                                                                                                                            :}
+
+
+                    |LLAMAR_SUB  INFOR_WHILE                                                                                                {:
+                                                                                                                                            parser.guardarNodoRaiz("subproceso()");
+                                                                                                                                            parser.hijosForWhile.add(parser.getRaiz());
+                                                                                                                                            :}
+
+
+                    |exit for_ FIN_CON_COMENT INFOR_WHILE                                                                                   {:
+                                                                                                                                            parser.guardarNodoRaiz("exit for");
+                                                                                                                                            parser.hijosForWhile.add(parser.getRaiz());
+                                                                                                                                            :}
+
+
+                    |exit do_ FIN_CON_COMENT INFOR_WHILE                                                                                    {:
+                                                                                                                                            parser.guardarNodoRaiz("exit do");
+                                                                                                                                            parser.hijosForWhile.add(parser.getRaiz());
+                                                                                                                                            :}
+
+
+                    |exit for_ FIN_CON_COMENT                                                                                               {:
+                                                                                                                                            parser.guardarNodoRaiz("exit for");
+                                                                                                                                            parser.hijosForWhile.add(parser.getRaiz());
+                                                                                                                                            :}
+
+
+                    |exit do_ FIN_CON_COMENT                                                                                                {:
+                                                                                                                                            parser.guardarNodoRaiz("exit do");
+                                                                                                                                            parser.hijosForWhile.add(parser.getRaiz());
+                                                                                                                                            :}
+
+
+                    |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT                                                        {:
+                                                                                                                                            parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                                            parser.hijosForWhile.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INFOR_WHILE                                            {:
+                                                                                                                                            parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                                            parser.hijosForWhile.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |console_ punto readline parentesisA parentesisC FIN_CON_COMENT                                                         {:
+                                                                                                                                            parser.guardarNodoRaiz("console.readLine()");
+                                                                                                                                            parser.hijosForWhile.add(parser.getRaiz());
+                                                                                                                                            :}
+
+                    |console_ punto readline parentesisA parentesisC FIN_CON_COMENT INFOR_WHILE                                             {:
+                                                                                                                                            parser.guardarNodoRaiz("console.readLine()");
+                                                                                                                                            parser.hijosForWhile.add(parser.getRaiz());
+                                                                                                                                            :};
 
 LLAMAR_FUNCION ::=  identificador parentesisA parentesisC
                     |identificador parentesisA PARAMETRO_SENCILLO;
@@ -910,6 +1356,7 @@ FUNCION_ ::=        private_ function_ identificador parentesisA PARAMETRO paren
                                                                                                                                             :}
 
                     |error function_ identificador parentesisA PARAMETRO parentesisC as TYPE_ FIN_CON_COMENT INFUNCION PIE_FUNCION
+                    |private_ function_ identificador parentesisA PARAMETRO parentesisC as TYPE_ FIN_CON_COMENT error PIE_FUNCION
                     |private_ error identificador parentesisA PARAMETRO parentesisC as TYPE_ FIN_CON_COMENT INFUNCION PIE_FUNCION
                     |private_ function_ error parentesisA PARAMETRO parentesisC as TYPE_ FIN_CON_COMENT INFUNCION PIE_FUNCION
                     |private_ function_ identificador error PARAMETRO parentesisC as TYPE_ FIN_CON_COMENT INFUNCION PIE_FUNCION
@@ -1193,10 +1640,27 @@ INFOR_FUNCION ::=       console_ punto writeline parentesisA  INPARENTESIS paren
 
 SENTENCIA_FOR_FUNCION ::=IF_FOR_FUNCION |FOR_FUNCION|WHILE_FOR_FUNCION;
 
-IF_FOR_FUNCION ::=       if_ CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION  end_ if_ FIN_CON_COMENT
-                        |if_ CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION  else_ FIN_CON_COMENT INIF_FOR_FUNCION  end_ if_ FIN_CON_COMENT
-                        |if_ CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION ELSE_IF_FOR_FUNCION FIN_CON_COMENT INIF_FOR_FUNCION end_ if_ FIN_CON_COMENT
-                        |if_ CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION ELSE_IF_FOR_FUNCION2 end_ if_ FIN_CON_COMENT;
+IF_FOR_FUNCION ::=       if_ CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION  end_ if_ FIN_CON_COMENT                                                    {:
+                                                                                                                                                        parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                                        parser.hijosIfForFuncion.add(parser.getRaiz());
+                                                                                                                                                        :} 
+                                          
+                        |if_ CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION  else_ FIN_CON_COMENT INIF_FOR_FUNCION  end_ if_ FIN_CON_COMENT             {:
+                                                                                                                                                        parser.guardarNodoRaiz("else");
+                                                                                                                                                        parser.hijosIfForFuncion.add(parser.getRaiz());
+                                                                                                                                                        parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                                        parser.hijosIfForFuncion.add(parser.getRaiz());
+                                                                                                                                                        :}  
+
+                        |if_ CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION ELSE_IF_FOR_FUNCION FIN_CON_COMENT INIF_FOR_FUNCION end_ if_ FIN_CON_COMENT {:
+                                                                                                                                                        parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                                        parser.hijosIfForFuncion.add(parser.getRaiz());
+                                                                                                                                                        :} 
+
+                        |if_ CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION ELSE_IF_FOR_FUNCION2 end_ if_ FIN_CON_COMENT                                {:
+                                                                                                                                                        parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                                        parser.hijosIfForFuncion.add(parser.getRaiz());
+                                                                                                                                                        :} ;
 
 INIF_FOR_FUNCION ::=     console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT
                         |DECLARACION
@@ -1219,38 +1683,113 @@ INIF_FOR_FUNCION ::=     console_ punto writeline parentesisA  INPARENTESIS pare
                         |console_ punto readline parentesisA parentesisC FIN_CON_COMENT
                         |console_ punto readline parentesisA parentesisC FIN_CON_COMENT INIF_FOR_FUNCION; 
 
-ELSE_IF_FOR_FUNCION ::=  ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION else_
-                        |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION ELSE_IF_FOR_FUNCION;
+ELSE_IF_FOR_FUNCION ::=  ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION else_                                                               {:
+                                                                                                                                                        parser.guardarNodoRaiz("else");
+                                                                                                                                                        parser.hijosIfForFuncion.add(parser.getRaiz());
+                                                                                                                                                        parser.guardarNodoRaiz("elseif condicion then");
+                                                                                                                                                        parser.hijosIfForFuncion.add(parser.getRaiz());
+                                                                                                                                                        :} 
+                        |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION ELSE_IF_FOR_FUNCION                                                 {:
+                                                                                                                                                        
+                                                                                                                                                        parser.guardarNodoRaiz("elseif condicion then");
+                                                                                                                                                        parser.hijosIfForFuncion.add(parser.getRaiz());
+                                                                                                                                                        :} ;
 
-ELSE_IF_FOR_FUNCION2::=  ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION 
-                        |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION ELSE_IF_FOR_FUNCION2;
+ELSE_IF_FOR_FUNCION2::=  ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION                                                                     {:
+                                                                                                                                                        
+                                                                                                                                                        parser.guardarNodoRaiz("elseif condicion then");
+                                                                                                                                                        parser.hijosIfForFuncion.add(parser.getRaiz());
+                                                                                                                                                        :}
+                        |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_FOR_FUNCION ELSE_IF_FOR_FUNCION2                                                {:
+                                                                                                                                                        
+                                                                                                                                                        parser.guardarNodoRaiz("elseif condicion then");
+                                                                                                                                                        parser.hijosIfForFuncion.add(parser.getRaiz());
+                                                                                                                                                        :};
 
-WHILE_FOR_FUNCION::=     do_ WHILE_TYPE CONDICION FIN_CON_COMENT INWHILE_FOR_FUNCION loop FIN_CON_COMENT;
+WHILE_FOR_FUNCION::=     do_ WHILE_TYPE CONDICION FIN_CON_COMENT INWHILE_FOR_FUNCION loop FIN_CON_COMENT                                    {: 
+                                                                                                                                            parser.guardarNodoRaiz("do while condicion");
+                                                                                                                                            parser.hijosForFuncion.add(parser.getRaiz());
+                                                                                                                                            Collections.reverse(parser.hijosWhileForFuncion);
+                                                                                                                                            for(Nodo n : parser.hijosWhileFuncion){
+                                                                                                                                                    parser.getRaiz().agregarHijo(n);
+                                                                                                                                            }
+                                                                                                                                            Nodo tmp = new Nodo("Loop");
+                                                                                                                                            parser.getRaiz().agregarHijo(tmp);
+                                                                                                                                            :} ;
 
-INWHILE_FOR_FUNCION ::=  console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT
+INWHILE_FOR_FUNCION ::=  console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT                                      {:
+                                                                                                                                            parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
                         |DECLARACION|SENTENCIA_WHILE
                         |comentario findelinea 
                         |comentario  findelinea INWHILE_FOR_FUNCION
-                        |console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INWHILE_FOR_FUNCION
-                        |DECLARACION INWHILE_FOR_FUNCION
-                        |SENTENCIA_WHILE INWHILE_FOR_FUNCION
-                        |LLAMAR_FUNCION FIN_CON_COMENT
-                        |LLAMAR_FUNCION FIN_CON_COMENT INWHILE_FOR_FUNCION
-                        |LLAMAR_SUB 
-                        |LLAMAR_SUB  INWHILE_FOR_FUNCION
-                        |exit do_ FIN_CON_COMENT INWHILE_FOR_FUNCION
-                        |exit for_ FIN_CON_COMENT INWHILE_FOR_FUNCION
-                        |exit function_ FIN_CON_COMENT INWHILE_FOR_FUNCION|exit do_ FIN_CON_COMENT 
-                        |exit for_ FIN_CON_COMENT 
-                        | exit function_ FIN_CON_COMENT
-                        |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT
-                        |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INWHILE_FOR_FUNCION
-                        |console_ punto readline parentesisA parentesisC FIN_CON_COMENT
-                        |console_ punto readline parentesisA parentesisC FIN_CON_COMENT INWHILE_FOR_FUNCION;
+                        |console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INWHILE_FOR_FUNCION                  {:
+                                                                                                                                            parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |DECLARACION INWHILE_FOR_FUNCION                                                                                    {:
+                                                                                                                                            parser.guardarNodoRaiz("declaracion");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |SENTENCIA_WHILE INWHILE_FOR_FUNCION                                                                                    
+                        |LLAMAR_FUNCION FIN_CON_COMENT                                                                                      {:
+                                                                                                                                            parser.guardarNodoRaiz("funcion()");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |LLAMAR_FUNCION FIN_CON_COMENT INWHILE_FOR_FUNCION                                                                  {:
+                                                                                                                                            parser.guardarNodoRaiz("funcion()");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |LLAMAR_SUB                                                                                                         {:
+                                                                                                                                            parser.guardarNodoRaiz("subproceso()");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}          
+                        |LLAMAR_SUB  INWHILE_FOR_FUNCION                                                                                    {:
+                                                                                                                                            parser.guardarNodoRaiz("subproceso()");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |exit do_ FIN_CON_COMENT INWHILE_FOR_FUNCION                                                                        {:
+                                                                                                                                            parser.guardarNodoRaiz("exit do");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |exit for_ FIN_CON_COMENT INWHILE_FOR_FUNCION                                                                       {:
+                                                                                                                                            parser.guardarNodoRaiz("exit for");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |exit function_ FIN_CON_COMENT INWHILE_FOR_FUNCION|exit do_ FIN_CON_COMENT                                          {:
+                                                                                                                                            parser.guardarNodoRaiz("exit do");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |exit for_ FIN_CON_COMENT                                                                                           {:
+                                                                                                                                            parser.guardarNodoRaiz("exit for");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        | exit function_ FIN_CON_COMENT                                                                                     {:
+                                                                                                                                            parser.guardarNodoRaiz("exit function");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT                                                    {:
+                                                                                                                                            parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INWHILE_FOR_FUNCION                                {:
+                                                                                                                                            parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |console_ punto readline parentesisA parentesisC FIN_CON_COMENT                                                     {:
+                                                                                                                                            parser.guardarNodoRaiz("console.readLine()");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |console_ punto readline parentesisA parentesisC FIN_CON_COMENT INWHILE_FOR_FUNCION                                 {:
+                                                                                                                                            parser.guardarNodoRaiz("console.readLine()");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :};
 
 WHILE_FUNCION::=        do_ WHILE_TYPE CONDICION FIN_CON_COMENT INWHILE_FUNCION loop FIN_CON_COMENT                                        {: 
                                                                                                                                             parser.guardarNodoRaiz("do while condicion");
                                                                                                                                             parser.hijosFuncion.add(parser.getRaiz());
+                                                                                                                                            Collections.reverse(parser.hijosWhileFuncion);
                                                                                                                                             for(Nodo n : parser.hijosWhileFuncion){
                                                                                                                                                     parser.getRaiz().agregarHijo(n);
                                                                                                                                             }
@@ -1340,11 +1879,28 @@ INWHILE_FUNCION ::=     console_ punto writeline parentesisA  INPARENTESIS paren
 
 SENTENCIA_WHILE_FUNCION ::= IF_WHILE_FUNCION |FOR_WHILE_FUNCION|WHILE_FUNCION;
 
-IF_WHILE_FUNCION ::=     if_ CONDICION then FIN_CON_COMENT INIF_WHILE_FUNCION end_ if_ FIN_CON_COMENT 
-                        |if_ CONDICION then FIN_CON_COMENT INIF_WHILE_FUNCION else_ INIF_WHILE_FUNCION end_ if_ FIN_CON_COMENT
-                        |if_ CONDICION then FIN_CON_COMENT INIF_WHILE_FUNCION ELSE_IF_WHILE_FUNCION else_ FIN_CON_COMENT INIF_WHILE_FUNCION end_ if_ FIN_CON_COMENT 
-                        |if_ CONDICION then FIN_CON_COMENT INIF_WHILE_FUNCION ELSE_IF_WHILE_FUNCION FIN_CON_COMENT
-                        |if_ CONDICION then FIN_CON_COMENT INIF_WHILE_FUNCION ELSE_IF_WHILE_FUNCION2 end_ if_ FIN_CON_COMENT;
+IF_WHILE_FUNCION ::=     if_ CONDICION then FIN_CON_COMENT INIF_WHILE_FUNCION end_ if_ FIN_CON_COMENT                                                                   {:
+                                                                                                                                                                        parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                                                        parser.hijosIfWhileFuncion.add(parser.getRaiz());
+                                                                                                                                                                        :}
+
+                        |if_ CONDICION then FIN_CON_COMENT INIF_WHILE_FUNCION else_ INIF_WHILE_FUNCION end_ if_ FIN_CON_COMENT                                          {:
+                                                                                                                                                                        parser.guardarNodoRaiz("else");
+                                                                                                                                                                        parser.hijosIfWhileFuncion.add(parser.getRaiz());
+                                                                                                                                                                        parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                                                        parser.hijosIfWhileFuncion.add(parser.getRaiz());
+                                                                                                                                                                        :}
+
+                        
+                        |if_ CONDICION then FIN_CON_COMENT INIF_WHILE_FUNCION ELSE_IF_WHILE_FUNCION FIN_CON_COMENT                                                      {:
+                                                                                                                                                                        parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                                                        parser.hijosIfWhileFuncion.add(parser.getRaiz());
+                                                                                                                                                                        :}
+
+                        |if_ CONDICION then FIN_CON_COMENT INIF_WHILE_FUNCION ELSE_IF_WHILE_FUNCION2 end_ if_ FIN_CON_COMENT                                            {:
+                                                                                                                                                                        parser.guardarNodoRaiz("if condicion then");
+                                                                                                                                                                        parser.hijosIfWhileFuncion.add(parser.getRaiz());
+                                                                                                                                                                        :};
                      
 
 INIF_WHILE_FUNCION ::=  console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT|DECLARACION
@@ -1367,33 +1923,120 @@ INIF_WHILE_FUNCION ::=  console_ punto writeline parentesisA  INPARENTESIS paren
                         |console_ punto readline parentesisA parentesisC FIN_CON_COMENT
                         |console_ punto readline parentesisA parentesisC FIN_CON_COMENT INIF_WHILE_FUNCION;
 
-ELSE_IF_WHILE_FUNCION ::= ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_WHILE_FUNCION else_
-                        |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_WHILE_FUNCION ELSE_IF_WHILE_FUNCION;
+ELSE_IF_WHILE_FUNCION ::= ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_WHILE_FUNCION else_                                                                            {:
+                                                                                                                                                                        parser.guardarNodoRaiz("else");
+                                                                                                                                                                        parser.hijosIfWhileFuncion.add(parser.getRaiz());
+                                                                                                                                                                        parser.guardarNodoRaiz("elseif condicion then");
+                                                                                                                                                                        parser.hijosIfWhileFuncion.add(parser.getRaiz());
+                                                                                                                                                                        :}
 
-ELSE_IF_WHILE_FUNCION2::= ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_WHILE_FUNCION 
-                        |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_WHILE_FUNCION ELSE_IF_WHILE_FUNCION2;
+                        |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_WHILE_FUNCION ELSE_IF_WHILE_FUNCION                                                             {:
+                                                                                                                                                                        parser.guardarNodoRaiz("elseif condicion then");
+                                                                                                                                                                        parser.hijosIfWhileFuncion.add(parser.getRaiz());
+                                                                                                                                                                        :};
+
+ELSE_IF_WHILE_FUNCION2::= ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_WHILE_FUNCION                                                                                  {:
+                                                                                                                                                                        parser.guardarNodoRaiz("elseif condicion then");
+                                                                                                                                                                        parser.hijosIfWhileFuncion.add(parser.getRaiz());
+                                                                                                                                                                        :}
+                        |ELSEIF_TYPE CONDICION then FIN_CON_COMENT INIF_WHILE_FUNCION ELSE_IF_WHILE_FUNCION2                                                            {:
+                                                                                                                                                                        parser.guardarNodoRaiz("elseif condicion then");
+                                                                                                                                                                        parser.hijosIfWhileFuncion.add(parser.getRaiz());
+                                                                                                                                                                        :};
 
 
-FOR_WHILE_FUNCION ::=   for_ identificador igual NUMERO to NUMERO step_ NUMERO FIN_CON_COMENT INFOR_WHILE_FUNCION next identificador FIN_CON_COMENT;
+FOR_WHILE_FUNCION ::=   for_ identificador igual NUMERO to NUMERO step_ NUMERO FIN_CON_COMENT INFOR_WHILE_FUNCION next identificador 
+                        FIN_CON_COMENT                                                                                                      {: 
+                                                                                                                                            parser.guardarNodoRaiz("do while condicion");
+                                                                                                                                            parser.hijosWhileFuncion.add(parser.getRaiz());
+                                                                                                                                            Collections.reverse(parser.hijosWhileForFuncion);
+                                                                                                                                            for(Nodo n : parser.hijosWhileFuncion){
+                                                                                                                                                    parser.getRaiz().agregarHijo(n);
+                                                                                                                                            }
+                                                                                                                                            Nodo tmp = new Nodo("Loop");
+                                                                                                                                            parser.getRaiz().agregarHijo(tmp);
+                                                                                                                                            
+                                                                                                                                            :};
 
-INFOR_WHILE_FUNCION ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT
-                        |DECLARACION|SENTENCIA_WHILE
-                        |comentario findelinea 
-                        |comentario  findelinea INFOR_WHILE_FUNCION                            
-                        |console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INFOR_WHILE_FUNCION
-                        |DECLARACION INFOR_WHILE_FUNCION
-                        |SENTENCIA_WHILE INFOR_WHILE_FUNCION
-                        |LLAMAR_FUNCION FIN_CON_COMENT
-                        |LLAMAR_FUNCION FIN_CON_COMENT INFOR_WHILE_FUNCION
-                        |LLAMAR_SUB 
-                        |LLAMAR_SUB  INFOR_WHILE_FUNCION
-                        |exit do_ FIN_CON_COMENT INFOR_WHILE_FUNCION
-                        |exit for_ FIN_CON_COMENT INFOR_WHILE_FUNCION
-                        |exit function_ FIN_CON_COMENT INFOR_WHILE_FUNCION
-                        |exit do_ FIN_CON_COMENT 
-                        |exit for_ FIN_CON_COMENT 
-                        |exit function_ FIN_CON_COMENT
-                        |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT
-                        |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INFOR_WHILE_FUNCION
-                        |console_ punto readline parentesisA parentesisC FIN_CON_COMENT
-                        |console_ punto readline parentesisA parentesisC FIN_CON_COMENT INFOR_WHILE_FUNCION;
+INFOR_WHILE_FUNCION ::= console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT                                       {:
+                                                                                                                                            parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |DECLARACION                                                                                                        {:
+                                                                                                                                            parser.guardarNodoRaiz("declaracion");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |SENTENCIA_WHILE
+                        |comentario findelinea                                                                                              {:
+                                                                                                                                            parser.guardarNodoRaiz("comentario");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |comentario  findelinea INFOR_WHILE_FUNCION                                                                         {:
+                                                                                                                                            parser.guardarNodoRaiz("comentario");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}                          
+                        |console_ punto writeline parentesisA  INPARENTESIS parentesisC FIN_CON_COMENT INFOR_WHILE_FUNCION                  {:
+                                                                                                                                            parser.guardarNodoRaiz("console.witeLine()");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |DECLARACION INFOR_WHILE_FUNCION                                                                                    {:
+                                                                                                                                            parser.guardarNodoRaiz("declaracion");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |SENTENCIA_WHILE INFOR_WHILE_FUNCION    
+                        |LLAMAR_FUNCION FIN_CON_COMENT                                                                                      {:
+                                                                                                                                            parser.guardarNodoRaiz("funcion()");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |LLAMAR_FUNCION FIN_CON_COMENT INFOR_WHILE_FUNCION                                                                  {:
+                                                                                                                                            parser.guardarNodoRaiz("funcion()");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |LLAMAR_SUB                                                                                                         {:
+                                                                                                                                            parser.guardarNodoRaiz("subproceso()");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |LLAMAR_SUB  INFOR_WHILE_FUNCION                                                                                    {:
+                                                                                                                                            parser.guardarNodoRaiz("subproceso()");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |exit do_ FIN_CON_COMENT INFOR_WHILE_FUNCION                                                                        {:
+                                                                                                                                            parser.guardarNodoRaiz("exit do");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |exit for_ FIN_CON_COMENT INFOR_WHILE_FUNCION                                                                       {:
+                                                                                                                                            parser.guardarNodoRaiz("exit for");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |exit function_ FIN_CON_COMENT INFOR_WHILE_FUNCION                                                                  {:
+                                                                                                                                            parser.guardarNodoRaiz("exit function");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |exit do_ FIN_CON_COMENT                                                                                            {:
+                                                                                                                                            parser.guardarNodoRaiz("exit do");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :} 
+                        |exit for_ FIN_CON_COMENT                                                                                           {:
+                                                                                                                                            parser.guardarNodoRaiz("exit for");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :} 
+                        |exit function_ FIN_CON_COMENT                                                                                      {:
+                                                                                                                                            parser.guardarNodoRaiz("exit function");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT                                                    {:
+                                                                                                                                            parser.guardarNodoRaiz("console.wirteLine()");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |console_ punto writeline parentesisA parentesisC FIN_CON_COMENT INFOR_WHILE_FUNCION                                {:
+                                                                                                                                            parser.guardarNodoRaiz("console.writeLine()");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |console_ punto readline parentesisA parentesisC FIN_CON_COMENT                                                     {:
+                                                                                                                                            parser.guardarNodoRaiz("console.readLine()");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}
+                        |console_ punto readline parentesisA parentesisC FIN_CON_COMENT INFOR_WHILE_FUNCION                                 {:
+                                                                                                                                            parser.guardarNodoRaiz("console.readLine()");
+                                                                                                                                            parser.hijosWhileForFuncion.add(parser.getRaiz());
+                                                                                                                                            :}; 
